@@ -91,7 +91,6 @@ a.b1-bg:hover, a.b2-bg:hover, a.b3-bg:hover, a.b4-bg:hover, a.b5-bg:hover, a.b6-
 	order: 1;
 	margin: 0px;
 	padding: 0px;
-	margin-bottom: 1em;
 }
 .grid .E08000032 { grid-column: 1; background-color: #006871; color: white; }
 .grid .E08000033 { grid-column: 2; background-color: #3a843e; color: white; }
@@ -111,7 +110,9 @@ a.b1-bg:hover, a.b2-bg:hover, a.b3-bg:hover, a.b4-bg:hover, a.b5-bg:hover, a.b6-
 
 .output { position: relative; padding: 0.5em; }
 
-
+section > div > div {
+	text-align: center;
+}
 .number {
 	position: relative;
 	line-height: 1em;
@@ -152,4 +153,30 @@ div:hover > .updated, div:hover > .title, div:focus > .updated, div:focus > .tit
 }
 *:focus {
 	background: black!important;
+}
+
+@media only screen and (max-width: 1080px) {
+	.grid {
+		grid-template-columns: 1fr;
+		grid-template-rows: auto auto;
+	}
+	.grid .E08000032 { grid-column: 1; }
+	.grid .E08000033 { grid-column: 1; }
+	.grid .E08000034 { grid-column: 1; }
+	.grid .E08000035 { grid-column: 1; }
+	.grid .E08000036 { grid-column: 1; }
+	.grid .row-1 { grid-row: auto; }
+	.grid .row-2 { grid-row: auto; }
+	.grid .row-3 { grid-row: auto; }
+	.grid .row-4 { grid-row: auto; }
+	.grid .row-5 { grid-row: auto; }
+	.grid .row-6 { grid-row: auto; }
+	.grid .row-7 { grid-row: auto; }
+	.grid .row-8 { grid-row: auto; }
+	.grid .row-9 { grid-row: auto; }
+
+}
+
+@media only screen and (max-width: 750px) {
+	.doublepadded { padding: 1em; }
 }
