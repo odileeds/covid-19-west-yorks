@@ -143,6 +143,9 @@ a.b1-bg:hover, a.b2-bg:hover, a.b3-bg:hover, a.b4-bg:hover, a.b5-bg:hover, a.b6-
 	line-height: 1.5em;
 	opacity: 0.2;
 }
-div:hover > .updated, div:hover > .title {
+div:hover > .updated, div:hover > .title, div:focus > .updated, div:focus > .title {
 	opacity: 1;
+}
+*:focus {
+	background: black!important;
 }
