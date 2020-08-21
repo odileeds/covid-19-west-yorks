@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8" />
+	<title>West Yorkshire COVID-19 Dashboard</title>
+	<link rel="StyleSheet" href="resources/style.css" type="text/css" />
+</head>
+<body class="b1-bg">
+
+	<div class="b1-bg padded">
+		<div class="holder">
+			<h1>West Yorkshire COVID-19 Dashboard</h1>
+		</div>
+	</div>
+
+	<div class="b6-bg doublepadded">
+		<div>
+			<section class="grid">
+				<h2 class="E08000032 row-1">Bradford</h2>
+				<div class="E08000032 row-2 total padded">Total</div>
+				<div class="E08000032 row-3 total-percapita padded"></div>
+
+				<h2 class="E08000033 row-1">Calderdale</h2>
+				<div class="E08000033 row-2 total padded">Total</div>
+				<div class="E08000033 row-3 total-percapita padded"></div>
+
+				<h2 class="E08000034 row-1">Kirklees</h2>
+				<div class="E08000034 total padded">Total</div>
+				<div class="E08000034 row-3 total-percapita padded"></div>
+
+				<h2 class="E08000035 row-1">Leeds</h2>
+				<div class="E08000035 total padded">Total</div>
+				<div class="E08000035 row-3 total-percapita padded"></div>
+
+				<h2 class="E08000036 row-1">Wakefield</h2>
+				<div class="E08000036 total padded">Total</div>
+				<div class="E08000036 row-3 total-percapita padded"></div>
+			</ul>
+
+		</div>
+	</div>
+
+	<footer class="b1-bg">
+		<div class="holder">
+			© 2020 <a href="https://odileeds.org/">ODI Leeds</a>. Released under an MIT license. <a href="https://github.com/odileeds/covid-19-west-yorks">Source on Github</a>.
+		</div>
+	</footer>
+
+	<script>
+	// shim layer with setTimeout fallback
+	window.requestAnimFrame = (function(){
+		return  window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function( callback ){ window.setTimeout(callback, 1000 / 60); };
+	})();
+	var pop = {"E08000032":540909,"E08000033":210958,"E08000034":441772,"E08000035":795565,"E08000036":352983};
+	var lad = {};
+	function initPanels(la){
+		for(var id in lad[la].panels){
+			panels = lad[la].panels[id];
+			lad[la].panels[id] = {'_parent':document.querySelector('.'+la+'.'+id)};
+			lad[la].panels[id]._parent.innerHTML = "";
+			for(var p = 0; p < panels.length; p++){
+				lad[la].panels[id][panels[p].type] = document.createElement(panels[p].tagname);
+				lad[la].panels[id][panels[p].type].classList.add(panels[p]['type']);
+				lad[la].panels[id][panels[p].type].innerHTML = panels[p].html;
+				lad[la].panels[id]._parent.append(lad[la].panels[id][panels[p].type]);
+			}
+		}
+		return;
+	}
+	function displayLA(la){
+		// Show total
+		animateNumber(lad[la].panels['total'].number,lad[la].json.data[0]['cumCasesBySpecimenDate'],300,'');
+		lad[la].panels['total'].updated.innerHTML = lad[la].json.data[0].date;
+
+		// Show total/100,000
+		animateNumber(lad[la].panels['total-percapita'].number,Math.round(lad[la].json.data[0]['cumCasesBySpecimenDate']*1e5/pop[la]),300,'');
+		lad[la].panels['total-percapita'].updated.innerHTML = lad[la].json.data[0].date;
+
+		return this;
+	}
+	function getDataForLA(la){
+		url = "https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode={{LA}}&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json";
+		url = "temp/{{LA}}.json";
+		lad[la] = {'url':url};
+		url = url.replace(/\{\{LA\}\}/,la);
+		console.info('Getting data for '+la+' from '+url);
+		lad[la].panels = {
+			'total': [{'tagname':'h3','type':'title','html':'Total cases'},{'tagname':'div','type':'number','html':'0'},{'tagname':'div','type':'updated','html':'2020'}],
+			'total-percapita': [{'tagname':'h3','type':'title','html':'Total cases/100,000'},{'tagname':'div','type':'number','html':'0'},{'tagname':'div','type':'updated','html':'2020'}]
+		};
+		initPanels(la);
+		
+		var load = document.createElement('img');
+		load.src = "resources/odi.svg";
+		load.classList.add('spinner');
+		document.querySelector('h2.'+la).append(load);
+		return fetch(url,{'method':'GET'})
+		.then(response => { return response.json() })
+		.then(json => {
+			lad[la].json = json;
+			load.parentNode.removeChild(load);
+			displayLA(la);
+		}).catch(error => {
+			console.error(error,url);
+			lad[la] = {};
+		});
+	}
+	function formatNumber(v){
+		if(typeof v !== "number") return v;
+		if(v > 1e7) return Math.round(v/1e6)+"M";
+		if(v > 1e6) return (v/1e6).toFixed(1)+"M";
+		if(v > 1e5) return Math.round(v/1e3)+"k";
+		if(v > 1e4) return Math.round(v/1e3)+"k";
+		return v;
+	}
+	function animateNumber(el,val,duration,units){
+		if(typeof val!=="number"){
+			val = el.innerHTML;
+			if(val) val = parseFloat(val);
+			el.innerHTML = '';
+		}
+		if(!units) units = "";
+		var start = new Date();
+		var v;
+		function frame(){
+			var now = new Date();
+			// Set the current time in seconds
+			var f = (now - start)/duration;
+			if(f < 1){
+				v = formatNumber(Math.round(val*f));
+				el.innerHTML = (units+v);
+				requestAnimFrame(frame);
+			}else{
+				el.innerHTML = (units+formatNumber(val));
+			}
+		}
+		if(typeof val==="number") frame();
+		return;			
+	}
+	
+	var promises = [];
+	for(var la in pop) promises.push(getDataForLA(la));
+	
+	promises.map(p => p.catch(e => e));
+	Promise.all(promises).then(responses => {
+		console.log('here');
+	});
+	
+	
+	</script>
+</body>
+</html>
