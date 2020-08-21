@@ -18,34 +18,44 @@
 		<div>
 			<section class="grid">
 				<h2 class="E08000032 row-1" tabindex="0">Bradford</h2>
-				<div class="E08000032 row-2 total padded" tabindex="0"></div>
-				<div class="E08000032 row-3 weekly padded" tabindex="0"></div>
-				<div class="E08000032 row-4 weekly-change padded" tabindex="0"></div>
-				<div class="E08000032 row-5 total-percapita padded" tabindex="0"></div>
+				<div class="E08000032 row-2 population padded" tabindex="0"></div>
+				<div class="E08000032 row-3 total padded" tabindex="0"></div>
+				<div class="E08000032 row-4 weekly padded" tabindex="0"></div>
+				<div class="E08000032 row-5 weekly-change padded" tabindex="0"></div>
+				<div class="E08000032 row-6 total-percapita padded" tabindex="0"></div>
+				<div class="E08000032 row-7 weekly-percapita padded" tabindex="0"></div>
 
 				<h2 class="E08000033 row-1" tabindex="0">Calderdale</h2>
-				<div class="E08000033 row-2 total padded" tabindex="0"></div>
-				<div class="E08000033 row-3 weekly padded" tabindex="0"></div>
-				<div class="E08000033 row-4 weekly-change padded" tabindex="0"></div>
-				<div class="E08000033 row-5 total-percapita padded" tabindex="0"></div>
+				<div class="E08000033 row-2 population padded" tabindex="0"></div>
+				<div class="E08000033 row-3 total padded" tabindex="0"></div>
+				<div class="E08000033 row-4 weekly padded" tabindex="0"></div>
+				<div class="E08000033 row-5 weekly-change padded" tabindex="0"></div>
+				<div class="E08000033 row-6 total-percapita padded" tabindex="0"></div>
+				<div class="E08000033 row-7 weekly-percapita padded" tabindex="0"></div>
 
 				<h2 class="E08000034 row-1" tabindex="0">Kirklees</h2>
-				<div class="E08000034 row-2 total padded" tabindex="0"></div>
-				<div class="E08000034 row-3 weekly padded" tabindex="0"></div>
-				<div class="E08000034 row-4 weekly-change padded" tabindex="0"></div>
-				<div class="E08000034 row-5 total-percapita padded" tabindex="0"></div>
+				<div class="E08000034 row-2 population padded" tabindex="0"></div>
+				<div class="E08000034 row-3 total padded" tabindex="0"></div>
+				<div class="E08000034 row-4 weekly padded" tabindex="0"></div>
+				<div class="E08000034 row-5 weekly-change padded" tabindex="0"></div>
+				<div class="E08000034 row-6 total-percapita padded" tabindex="0"></div>
+				<div class="E08000034 row-7 weekly-percapita padded" tabindex="0"></div>
 
 				<h2 class="E08000035 row-1" tabindex="0">Leeds</h2>
-				<div class="E08000035 row-2 total padded" tabindex="0"></div>
-				<div class="E08000035 row-3 weekly padded" tabindex="0"></div>
-				<div class="E08000035 row-4 weekly-change padded" tabindex="0"></div>
-				<div class="E08000035 row-5 total-percapita padded" tabindex="0"></div>
+				<div class="E08000035 row-2 population padded" tabindex="0"></div>
+				<div class="E08000035 row-3 total padded" tabindex="0"></div>
+				<div class="E08000035 row-4 weekly padded" tabindex="0"></div>
+				<div class="E08000035 row-5 weekly-change padded" tabindex="0"></div>
+				<div class="E08000035 row-6 total-percapita padded" tabindex="0"></div>
+				<div class="E08000035 row-7 weekly-percapita padded" tabindex="0"></div>
 
 				<h2 class="E08000036 row-1" tabindex="0">Wakefield</h2>
-				<div class="E08000036 row-2 total padded" tabindex="0"></div>
-				<div class="E08000036 row-3 weekly padded" tabindex="0"></div>
-				<div class="E08000036 row-4 weekly-change padded" tabindex="0"></div>
-				<div class="E08000036 row-5 total-percapita padded" tabindex="0"></div>
+				<div class="E08000036 row-2 population padded" tabindex="0"></div>
+				<div class="E08000036 row-3 total padded" tabindex="0"></div>
+				<div class="E08000036 row-4 weekly padded" tabindex="0"></div>
+				<div class="E08000036 row-5 weekly-change padded" tabindex="0"></div>
+				<div class="E08000036 row-6 total-percapita padded" tabindex="0"></div>
+				<div class="E08000036 row-7 weekly-percapita padded" tabindex="0"></div>
 			</ul>
 
 		</div>
@@ -68,23 +78,31 @@
 		for(var id in lad[la].panels){
 			panels = lad[la].panels[id];
 			lad[la].panels[id] = {'_parent':document.querySelector('.'+la+'.'+id)};
-			lad[la].panels[id]._parent.innerHTML = "";
-			for(var p = 0; p < panels.length; p++){
-				lad[la].panels[id][panels[p].type] = document.createElement(panels[p].tagname);
-				lad[la].panels[id][panels[p].type].classList.add(panels[p]['type']);
-				lad[la].panels[id][panels[p].type].innerHTML = panels[p].html;
-				lad[la].panels[id]._parent.append(lad[la].panels[id][panels[p].type]);
-				if(panels[p]['type'] == "number"){
-					load = document.createElement('img');
-					load.src = "resources/odi.svg";
-					load.classList.add('spinner');
-					lad[la].panels[id][panels[p].type].append(load);
+			if(lad[la].panels[id]._parent){
+				lad[la].panels[id]._parent.innerHTML = "";
+				for(var p = 0; p < panels.length; p++){
+					lad[la].panels[id][panels[p].type] = document.createElement(panels[p].tagname);
+					lad[la].panels[id][panels[p].type].classList.add(panels[p]['type']);
+					if(panels[p]['class']) lad[la].panels[id][panels[p].type].classList.add(panels[p]['class']);
+					lad[la].panels[id][panels[p].type].innerHTML = panels[p].html;
+					lad[la].panels[id]._parent.append(lad[la].panels[id][panels[p].type]);
+					if(panels[p]['type'] == "number"){
+						load = document.createElement('img');
+						load.src = "resources/odi.svg";
+						load.classList.add('spinner');
+						lad[la].panels[id][panels[p].type].append(load);
+					}
 				}
+			}else{
+				console.error("Can't find "+la+"."+id);
 			}
 		}
 		return;
 	}
 	function displayLA(la){
+	
+		lad[la].panels['population'].number.innerHTML = pop[la].toLocaleString();
+	
 		// Show total
 		animateNumber(lad[la].panels['total'].number,lad[la].json.data[0]['cumCasesBySpecimenDate'],300,'');
 		lad[la].panels['total'].updated.innerHTML = lad[la].json.data[0].date;
@@ -106,6 +124,11 @@
 		if(weeks[0].days == 7){
 			animateNumber(lad[la].panels['weekly'].number,weeks[0].total,300,'');
 			lad[la].panels['weekly'].updated.innerHTML = 'Up to '+lad[la].json.data[0].date;
+			
+			if(lad[la].panels['weekly-percapita']._parent){
+				animateNumber(lad[la].panels['weekly-percapita'].number,Math.round(weeks[0].total*1e5/pop[la]),300,'');
+				lad[la].panels['weekly-percapita'].updated.innerHTML = 'Up to '+lad[la].json.data[0].date;
+			}
 		}
 		if(weeks[0].days == 7 && weeks[1].days == 7){
 			animateNumber(lad[la].panels['weekly-change'].number,weeks[0].total-weeks[1].total,300,'');
@@ -124,9 +147,11 @@
 		url = url.replace(/\{\{LA\}\}/,la);
 		console.info('Getting data for '+la+' from '+url);
 		lad[la].panels = {
+			'population': [{'tagname':'h3','type':'title','html':'Population'},{'tagname':'div','type':'number','class':'small','html':''}],
 			'total': [{'tagname':'h3','type':'title','html':'Total cases'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':'2020'}],
 			'total-percapita': [{'tagname':'h3','type':'title','html':'Total cases/100,000'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':'2020'}],
-			'weekly': [{'tagname':'h3','type':'title','html':'Weekly average'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':''}],
+			'weekly': [{'tagname':'h3','type':'title','html':'Weekly cases'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':''}],
+			'weekly-percapita': [{'tagname':'h3','type':'title','html':'Weekly cases/100,000'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':''}],
 			'weekly-change': [{'tagname':'h3','type':'title','html':'Change on previous week'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':''}]
 		};
 		initPanels(la);

@@ -111,6 +111,7 @@ a.b1-bg:hover, a.b2-bg:hover, a.b3-bg:hover, a.b4-bg:hover, a.b5-bg:hover, a.b6-
 
 .output { position: relative; padding: 0.5em; }
 
+
 .number {
 	position: relative;
 	line-height: 1em;
@@ -123,6 +124,9 @@ a.b1-bg:hover, a.b2-bg:hover, a.b3-bg:hover, a.b4-bg:hover, a.b5-bg:hover, a.b6-
 	-ms-transition: all 0.5s ease-in-out;
 	-o-transition: all 0.5s ease-in-out;
 	transition: all 0.5s ease-in-out;
+}
+.small {
+	font-size: 2.5em;
 }
 .title {
 	display: block;
