@@ -106,6 +106,7 @@ a.b1-bg:hover, a.b2-bg:hover, a.b3-bg:hover, a.b4-bg:hover, a.b5-bg:hover, a.b6-
 .grid .row-7 { grid-row: 7; }
 .grid .row-8 { grid-row: 8; }
 .grid .row-9 { grid-row: 9; }
+.grid .row-10 { grid-row: 10; }
 /* End of CSS Grid */
 
 .output { position: relative; padding: 0.5em; }

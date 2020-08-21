@@ -24,6 +24,10 @@
 				<div class="E08000032 row-5 weekly-change padded" tabindex="0"></div>
 				<div class="E08000032 row-6 total-percapita padded" tabindex="0"></div>
 				<div class="E08000032 row-7 weekly-percapita padded" tabindex="0"></div>
+				<div class="E08000032 row-8 weekly-deaths padded" tabindex="0"></div>
+				<div class="E08000032 row-9 total-deaths-covid padded" tabindex="0"></div>
+				<div class="E08000032 row-10 total-deaths-all padded" tabindex="0"></div>
+				<div class="E08000032 row-11 total-deaths-pc padded" tabindex="0"></div>
 
 				<h2 class="E08000033 row-1" tabindex="0">Calderdale</h2>
 				<div class="E08000033 row-2 population padded" tabindex="0"></div>
@@ -32,6 +36,10 @@
 				<div class="E08000033 row-5 weekly-change padded" tabindex="0"></div>
 				<div class="E08000033 row-6 total-percapita padded" tabindex="0"></div>
 				<div class="E08000033 row-7 weekly-percapita padded" tabindex="0"></div>
+				<div class="E08000033 row-8 weekly-deaths padded" tabindex="0"></div>
+				<div class="E08000033 row-9 total-deaths-covid padded" tabindex="0"></div>
+				<div class="E08000033 row-10 total-deaths-all padded" tabindex="0"></div>
+				<div class="E08000033 row-11 total-deaths-pc padded" tabindex="0"></div>
 
 				<h2 class="E08000034 row-1" tabindex="0">Kirklees</h2>
 				<div class="E08000034 row-2 population padded" tabindex="0"></div>
@@ -40,6 +48,10 @@
 				<div class="E08000034 row-5 weekly-change padded" tabindex="0"></div>
 				<div class="E08000034 row-6 total-percapita padded" tabindex="0"></div>
 				<div class="E08000034 row-7 weekly-percapita padded" tabindex="0"></div>
+				<div class="E08000034 row-8 weekly-deaths padded" tabindex="0"></div>
+				<div class="E08000034 row-9 total-deaths-covid padded" tabindex="0"></div>
+				<div class="E08000034 row-10 total-deaths-all padded" tabindex="0"></div>
+				<div class="E08000034 row-11 total-deaths-pc padded" tabindex="0"></div>
 
 				<h2 class="E08000035 row-1" tabindex="0">Leeds</h2>
 				<div class="E08000035 row-2 population padded" tabindex="0"></div>
@@ -48,6 +60,10 @@
 				<div class="E08000035 row-5 weekly-change padded" tabindex="0"></div>
 				<div class="E08000035 row-6 total-percapita padded" tabindex="0"></div>
 				<div class="E08000035 row-7 weekly-percapita padded" tabindex="0"></div>
+				<div class="E08000035 row-8 weekly-deaths padded" tabindex="0"></div>
+				<div class="E08000035 row-9 total-deaths-covid padded" tabindex="0"></div>
+				<div class="E08000035 row-10 total-deaths-all padded" tabindex="0"></div>
+				<div class="E08000035 row-11 total-deaths-pc padded" tabindex="0"></div>
 
 				<h2 class="E08000036 row-1" tabindex="0">Wakefield</h2>
 				<div class="E08000036 row-2 population padded" tabindex="0"></div>
@@ -56,6 +72,10 @@
 				<div class="E08000036 row-5 weekly-change padded" tabindex="0"></div>
 				<div class="E08000036 row-6 total-percapita padded" tabindex="0"></div>
 				<div class="E08000036 row-7 weekly-percapita padded" tabindex="0"></div>
+				<div class="E08000036 row-8 weekly-deaths padded" tabindex="0"></div>
+				<div class="E08000036 row-9 total-deaths-covid padded" tabindex="0"></div>
+				<div class="E08000036 row-10 total-deaths-all padded" tabindex="0"></div>
+				<div class="E08000036 row-11 total-deaths-pc padded" tabindex="0"></div>
 			</ul>
 
 		</div>
@@ -63,7 +83,8 @@
 
 	<footer class="b1-bg">
 		<div class="holder">
-			© 2020 <a href="https://odileeds.org/">ODI Leeds</a>. <a href="https://coronavirus.data.gov.uk/">Data comes from Public Health England</a>. Code released under an MIT license. <a href="https://github.com/odileeds/covid-19-west-yorks">Source on Github</a>.
+			© 2020 <a href="https://odileeds.org/">ODI Leeds</a>. <a href="https://coronavirus.data.gov.uk/">Cases data comes from Public Health England</a> and <a href="https://www.ons.gov.uk/datasets/weekly-deaths-local-authority/editions/time-series/versions">death data comes from ONS</a>.
+			<br />Code released under an MIT license. <a href="https://github.com/odileeds/covid-19-west-yorks">Source on Github</a>.
 		</div>
 	</footer>
 
@@ -78,6 +99,7 @@
 
 	// Define Local Authority Districts
 	var lad = {};
+	for(var la in pop){ lad[la] = {}; }
 
 	// Identify panels in DOM and put in loading animations
 	function initPanels(la){
@@ -111,7 +133,7 @@
 		return;
 	}
 	function displayLA(la){
-	
+
 		lad[la].panels['population'].number.innerHTML = pop[la].toLocaleString();
 	
 		// Show total
@@ -149,12 +171,36 @@
 		}
 
 
+		if(lad[la].deaths){
+			// Show total deaths
+			if(lad[la].panels['weekly-deaths']._parent){
+				// Update weekly value
+				animateNumber(lad[la].panels['weekly-deaths'].number,lad[la].deaths.week['covid-19'],300,'');
+				lad[la].panels['weekly-deaths'].updated.innerHTML = lad[la].deaths.week.text;
+				
+				// Update total covid
+				animateNumber(lad[la].panels['total-deaths-covid'].number,lad[la].deaths.total['covid-19'],300,'');
+				lad[la].panels['total-deaths-covid'].updated.innerHTML = lad[la].deaths.total.date;
+				
+				// Update total all
+				animateNumber(lad[la].panels['total-deaths-all'].number,lad[la].deaths.total['all'],300,'');
+				lad[la].panels['total-deaths-all'].updated.innerHTML = lad[la].deaths.total.date;
+				
+				// Update pc
+				animateNumber(lad[la].panels['total-deaths-pc'].number,Math.round(100*lad[la].deaths.total['covid-19']/lad[la].deaths.total['all']),300,'','%');
+				lad[la].panels['total-deaths-pc'].updated.innerHTML = lad[la].deaths.total.date;
+			}else{
+				console.warn('No DOM element for '+la+' weekly-deaths');
+			}
+		}else{
+			console.warn('No death data for '+la);
+		}
+
 		return this;
 	}
 	function getDataForLA(la){
 		url = "https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode={{LA}}&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json";
-		//url = "temp/{{LA}}.json";
-		lad[la] = {'url':url};
+		lad[la].url = url;
 		url = url.replace(/\{\{LA\}\}/,la);
 		console.info('Getting data for '+la+' from '+url);
 		lad[la].panels = {
@@ -163,7 +209,11 @@
 			'total-percapita': [{'tagname':'h3','type':'title','html':'Total cases/100,000'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':'2020'}],
 			'weekly': [{'tagname':'h3','type':'title','html':'Weekly cases'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':''}],
 			'weekly-percapita': [{'tagname':'h3','type':'title','html':'Weekly cases/100,000'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':''}],
-			'weekly-change': [{'tagname':'h3','type':'title','html':'Change on previous week'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':''}]
+			'weekly-change': [{'tagname':'h3','type':'title','html':'Change on previous week'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':''}],
+			'weekly-deaths': [{'tagname':'h3','type':'title','html':'Weekly COVID-19 deaths'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':''}],
+			'total-deaths-covid': [{'tagname':'h3','type':'title','html':'Total COVID-19 deaths'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':''}],
+			'total-deaths-all': [{'tagname':'h3','type':'title','html':'Total deaths'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':''}],
+			'total-deaths-pc': [{'tagname':'h3','type':'title','html':'COVID-19 deaths as a percent of total'},{'tagname':'div','type':'number','html':''},{'tagname':'div','type':'updated','html':''}]
 		};
 		initPanels(la);
 		
@@ -172,7 +222,7 @@
 		.then(json => {
 			lad[la].json = json;
 			//load.parentNode.removeChild(load);
-			displayLA(la);
+			//displayLA(la);
 		}).catch(error => {
 			console.error(error,url);
 			lad[la] = {};
@@ -186,14 +236,15 @@
 		if(v > 1e4) return Math.round(v/1e3)+"k";
 		return v;
 	}
-	function animateNumber(el,val,duration,units){
+	function animateNumber(el,val,duration,pre,post){
 		if(typeof val!=="number"){
 			val = el.innerHTML;
 			if(val) val = parseFloat(val);
 			el.innerHTML = '';
 		}
 		el.innerHTML = '';
-		if(!units) units = "";
+		if(!pre) pre = "";
+		if(!post) post = "";
 		var start = new Date();
 		var v;
 		function frame(){
@@ -202,10 +253,10 @@
 			var f = (now - start)/duration;
 			if(f < 1){
 				v = formatNumber(Math.round(val*f));
-				el.innerHTML = (units+v);
+				el.innerHTML = (pre+v+post);
 				requestAnimFrame(frame);
 			}else{
-				el.innerHTML = (units+formatNumber(val));
+				el.innerHTML = (pre+formatNumber(val)+post);
 			}
 		}
 		if(typeof val==="number") frame();
@@ -215,9 +266,22 @@
 	var promises = [];
 	for(var la in pop) promises.push(getDataForLA(la));
 	
+	// Get death data (from other repo)
+	promises.push(fetch("https://odileeds.github.io/covid-19/LocalAuthorities/data/death-summary.json",{'method':'GET'})
+		.then(response => { return response.json() })
+		.then(json => {
+			for(var la in json){
+				if(pop[la]) lad[la].deaths = json[la];
+			}
+		})
+	);
+	
+	
+	
 	promises.map(p => p.catch(e => e));
 	Promise.all(promises).then(responses => {
 		console.log('here');
+		for(var la in lad) displayLA(la);
 	});
 	
 	
