@@ -131,7 +131,7 @@ a.b1-bg:hover, a.b2-bg:hover, a.b3-bg:hover, a.b4-bg:hover, a.b5-bg:hover, a.b6-
 .title {
 	display: block;
 	line-height: 1em;
-	font-size: 1.25em;
+	font-size: 1em;
 	margin-bottom: 0.5em;
 	text-align: center;
 	margin-top: 0;
@@ -140,7 +140,7 @@ a.b1-bg:hover, a.b2-bg:hover, a.b3-bg:hover, a.b4-bg:hover, a.b5-bg:hover, a.b6-
 .updated {
 	left: 0px;
 	bottom: 0.25em;
-	font-size: 0.8em;
+	font-size: 0.75em;
 	width: 100%;
 	text-align: center;
 	color: inherit;
