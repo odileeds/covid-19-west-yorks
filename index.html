@@ -72,14 +72,24 @@
 	window.requestAnimFrame = (function(){
 		return  window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function( callback ){ window.setTimeout(callback, 1000 / 60); };
 	})();
+	
+	// Define populations
 	var pop = {"E08000032":540909,"E08000033":210958,"E08000034":441772,"E08000035":795565,"E08000036":352983};
+
+	// Define Local Authority Districts
 	var lad = {};
+
+	// Identify panels in DOM and put in loading animations
 	function initPanels(la){
 		for(var id in lad[la].panels){
+			// Get a copy of the panels
 			panels = lad[la].panels[id];
+			// Update the structure
 			lad[la].panels[id] = {'_parent':document.querySelector('.'+la+'.'+id)};
 			if(lad[la].panels[id]._parent){
+				// Clear any contents
 				lad[la].panels[id]._parent.innerHTML = "";
+				// Create each area within each panel
 				for(var p = 0; p < panels.length; p++){
 					lad[la].panels[id][panels[p].type] = document.createElement(panels[p].tagname);
 					lad[la].panels[id][panels[p].type].classList.add(panels[p]['type']);
@@ -87,6 +97,7 @@
 					lad[la].panels[id][panels[p].type].innerHTML = panels[p].html;
 					lad[la].panels[id]._parent.append(lad[la].panels[id][panels[p].type]);
 					if(panels[p]['type'] == "number"){
+						// If we have a "number" area, put a loading animation in it
 						load = document.createElement('img');
 						load.src = "resources/odi.svg";
 						load.classList.add('spinner');
