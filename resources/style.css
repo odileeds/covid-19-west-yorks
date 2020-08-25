@@ -158,6 +158,29 @@ div:hover > .updated, div:hover > .title, div:focus > .updated, div:focus > .tit
 }
 
 @media only screen and (max-width: 1080px) {
+	
+	#dashboard { font-size: 12px; }
+	
+}
+
+@media only screen and (max-width: 850px) {
+	
+	#dashboard { font-size: 11px; }
+	
+}
+
+@media only screen and (max-width: 750px) {
+	
+	#dashboard { font-size: 9px; }
+	
+}
+
+@media only screen and (max-width: 640px) {
+
+	#dashboard { font-size: 10px; }
+
+	.doublepadded { padding: 1em; }
+	
 	.grid {
 		grid-template-columns: 1fr;
 		grid-template-rows: auto auto;
@@ -176,9 +199,7 @@ div:hover > .updated, div:hover > .title, div:focus > .updated, div:focus > .tit
 	.grid .row-7 { grid-row: auto; }
 	.grid .row-8 { grid-row: auto; }
 	.grid .row-9 { grid-row: auto; }
+	.grid .row-10 { grid-row: auto; }
+	.grid .row-11 { grid-row: auto; }
 
-}
-
-@media only screen and (max-width: 750px) {
-	.doublepadded { padding: 1em; }
 }
