@@ -138,7 +138,7 @@ section > div > div {
 	margin-bottom: 0.5em;
 	text-align: center;
 	margin-top: 0;
-	opacity: 0.2;
+	opacity: 0.5;
 }
 .updated {
 	left: 0px;
@@ -148,7 +148,7 @@ section > div > div {
 	text-align: center;
 	color: inherit;
 	line-height: 1.5em;
-	opacity: 0.2;
+	opacity: 0.5;
 }
 div:hover > .updated, div:hover > .title, div:focus > .updated, div:focus > .title {
 	opacity: 1;
