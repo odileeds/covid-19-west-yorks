@@ -46,6 +46,7 @@ h1 { margin-top: 0; }
 h2 { margin-top: 0; padding: 0.25em 0; text-align: center; }
 footer { width: 100%; padding: 1em; padding-bottom: 3em; }
 footer a { color: white; }
+h2 a, h2 a:visited { color: inherit; }
 
 
 .c1-bg, .elsewhere .facebook:hover, .c1-bg-hover:hover, .c1-bg:visited { background-color: #2254F4; color: white; }
