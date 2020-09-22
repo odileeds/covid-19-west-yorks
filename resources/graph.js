@@ -38,11 +38,14 @@
 			if(!h){ h = w*0.5; }
 
 			miny = 0;
+			if(!props.axis) props.axis = {};
+			if(!props.axis.x) props.axis.x = {};
+			if(!props.axis.y) props.axis.y = {};
 
-			if(props['xaxis-max']) maxx = props['xaxis-max'];
-			if(props['xaxis-min']) minx = props['xaxis-min'];
-			if(props['yaxis-max']) maxy = props['yaxis-max'];
-			if(props['yaxis-min']) miny = props['yaxis-min'];
+			if(props.axis.x.max) maxx = props.axis.x.max;
+			if(props.axis.x.min) minx = props.axis.x.min;
+			if(props.axis.y.max) maxy = props.axis.y.max;
+			if(props.axis.y.min) miny = props.axis.y.min;
 
 			xrange = maxx - minx;
 			yrange = maxy - miny;
@@ -62,7 +65,7 @@
 			svg += "\t.graph-grid { font-family: \"Helvetica Neue\",Helvetica,Arial,\"Lucida Grande\",sans-serif; }\n";
 			svg += "\t.graph-grid line { stroke: rgb(255,255,255); stroke-width: "+(props['line'])+"; stroke-linecap: round; }\n";
 			svg += "\t.graph-grid.graph-grid-x text { text-anchor: middle; dominant-baseline: hanging; transform: translateY("+(props.tick*2)+"px); fill:white; }\n";
-			svg += "\t.graph-grid.graph-grid-y text { text-anchor: end; dominant-baseline: "+(props['yaxis-labels-baseline']||"middle")+"; transform: translateX(-"+(props['tick']*2)+"px); fill:white; }\n";
+			svg += "\t.graph-grid.graph-grid-y text { text-anchor: end; dominant-baseline: "+(props.axis.y.labels.baseline||"middle")+"; transform: translateX(-"+(props['tick']*2)+"px); fill:white; }\n";
 			svg += "\t</style>\n";
 			svg += "</defs>\n";
 
@@ -72,8 +75,8 @@
 			bottom = props.bottom||0;
 
 			// Draw grid lines
-			svg += buildAxis({'axis':'y','label':props['yaxis-label'],'label-left':props['yaxis-label-left'],'ticks':props['yaxis-ticks'],'line':props['xaxis-line'],'format':props['yaxis-format'],'n':3,'left':left,'right':right,'bottom':bottom,'top':topp,'axis-lines':props['yaxis-lines'],'width':w,'height':h,'xmin':minx,'xmax':maxx,'ymin':miny,'ymax':maxy});
-			svg += buildAxis({'axis':'x','label':props['xaxis-label'],'label-left':props['xaxis-label-left'],'type':'date','ticks':props['xaxis-ticks'],'line':props['yaxis-line'],'format':props['xaxis-format'],'left':left,'right':right,'bottom':bottom,'top':topp,'spacing':10,'axis-lines':props['xaxis-lines'],'width':w,'height':h,'xmin':minx,'xmax':maxx,'ymin':miny,'ymax':maxy});
+			svg += buildAxis('y',props.axis.y,{'n':3,'left':left,'right':right,'bottom':bottom,'top':topp,'width':w,'height':h,'xmin':minx,'xmax':maxx,'ymin':miny,'ymax':maxy});
+			svg += buildAxis('x',props.axis.x,{'type':'date','left':left,'right':right,'bottom':bottom,'top':topp,'spacing':10,'width':w,'height':h,'xmin':minx,'xmax':maxx,'ymin':miny,'ymax':maxy});
 
 			for(s = 0; s < this.series.length; s++){
 				series = this.series[s].title;
@@ -103,56 +106,55 @@
 			return svg;
 		}
 
-		function buildAxis(props){
+		function buildAxis(axis,props,conf){
 			var ticks,svg,t,a,b,axis,label,temp,tick;
-			axis = props.axis+"axis";
 			tick = (props.tick||5);
 			
-			ticks = makeTicks(props[(axis=="yaxis" ? "ymin":"xmin")],props[(axis=="yaxis" ? "ymax":"xmax")],props);
+			ticks = makeTicks(conf[(axis=="y" ? "ymin":"xmin")],conf[(axis=="y" ? "ymax":"xmax")],conf);
 
-			svg = "<g class=\"graph-grid graph-grid-"+props['axis']+"\">\n";
+			svg = "<g class=\"graph-grid graph-grid-"+axis+"\">\n";
 
 			for(t = 0; t < ticks.length; t++){
 
-				if(props.axis=="x"){
-					props['x'] = ticks['data-'+t];
-					props['y'] = props['ymin'];
+				if(axis=="x"){
+					conf['x'] = ticks['data-'+t];
+					conf['y'] = conf['ymin'];
 				}else{
-					props['x'] = props['xmin'];
-					props['y'] = ticks['data-'+t];		
+					conf['x'] = conf['xmin'];
+					conf['y'] = ticks['data-'+t];		
 				}
-				a = getXY(props);
+				a = getXY(conf);
 
-				if(props['axis']=="x"){
-					props['x'] = ticks['data-'+t];
-					props['y'] = props['ymax'];
+				if(axis=="x"){
+					conf['x'] = ticks['data-'+t];
+					conf['y'] = conf['ymax'];
 				}else{
-					props['x'] = props['xmax'];
-					props['y'] = ticks['data-'+t];		
+					conf['x'] = conf['xmax'];
+					conf['y'] = ticks['data-'+t];		
 				}
-				b = getXY(props);
-				if(props['axis']=="y"){
-					if(props['label-left']){
-						a[0] = props['label-left'];
+				b = getXY(conf);
+				if(axis=="y"){
+					if(props.label.left){
+						a[0] = props.label.left;
 					}
 				}
-				if(a[1] >= 0 && a[0] >= props['left']){
-					if((t == 0 && props['line']) || props['axis-lines']){
-						svg += "\t<line x1=\""+a[0]+"\" y1=\""+a[1]+"\" x2=\""+b[0]+"\" y2=\""+b[1]+"\" data-left=\""+props['left']+"\"></line>\n";
+				if(a[1] >= 0 && a[0] >= conf['left']){
+					if((t == 0 && props['line']) || props['lines']){
+						svg += "\t<line x1=\""+a[0]+"\" y1=\""+a[1]+"\" x2=\""+b[0]+"\" y2=\""+b[1]+"\" data-left=\""+conf['left']+"\"></line>\n";
 					}
-					if(a[0] < props['width']){
+					if(a[0] < conf['width']){
 
 						if(props['ticks']){
-							svg += "\t<line class=\"tick\" x1=\""+a[0]+"\" y1=\""+a[1]+"\" x2=\""+(a[0]-(axis=="yaxis" ? tick : 0))+"\" y2=\""+(a[1]+(axis=="yaxis" ? 0 : tick))+"\"></line>\n";
+							svg += "\t<line class=\"tick\" x1=\""+a[0]+"\" y1=\""+a[1]+"\" x2=\""+(a[0]-(axis=="y" ? tick : 0))+"\" y2=\""+(a[1]+(axis=="y" ? 0 : tick))+"\"></line>\n";
 						}
 						label = ticks['data-'+t];
 						if(ticks['label-'+t]) label = ticks['label-'+t];
 						if(props['format'] && props['format']=="commify") label = label.toLocaleString();
-						svg += "\t<text x=\""+a[0]+"\" y=\""+a[1]+"\" text-anchor=\""+(axis=="yaxis" ? "end":"middle")+"\">"+label+"</text>\n";
+						svg += "\t<text x=\""+a[0]+"\" y=\""+a[1]+"\" text-anchor=\""+(axis=="y" ? "end":"middle")+"\">"+label+"</text>\n";
 					}
 				}
 			}
-			svg += "\t<text style=\"text-anchor:middle;dominant-baseline:hanging;font-weight:bold;transform: translateY("+(props['top'] + (props['height']-props['top']-props['bottom'])/2)+"px) rotate(-90deg);\">"+(props['label']||"")+"</text>\n";
+			svg += "\t<text style=\"text-anchor:middle;dominant-baseline:hanging;font-weight:bold;transform: translateY("+(conf['top'] + (conf['height']-conf['top']-conf['bottom'])/2)+"px) rotate(-90deg);\">"+(props['label']||"")+"</text>\n";
 			svg += "</g>\n";
 			return svg;
 		}
