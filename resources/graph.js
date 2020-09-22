@@ -135,23 +135,23 @@
 				}
 				b = getXY(conf);
 				if(axis=="y"){
-					if(props.label && props.label.left){
-						a[0] = props.label.left;
+					if(props.labels && props.labels.left){
+						//a[0] = props.labels.left;
 					}
 				}
 				if(a[1] >= 0 && a[0] >= conf['left']){
-					if((t == 0 && props['line']) || props['lines']){
-						svg += "\t<line x1=\""+a[0]+"\" y1=\""+a[1]+"\" x2=\""+b[0]+"\" y2=\""+b[1]+"\" data-left=\""+conf['left']+"\"></line>\n";
-					}
 					if(a[0] < conf['width']){
-
+						if((t == 0 && props.line > 0) || props['lines']){
+							console.log('here');
+							svg += "\t<line x1=\""+a[0]+"\" y1=\""+a[1]+"\" x2=\""+b[0]+"\" y2=\""+b[1]+"\" data-left=\""+conf['left']+"\"></line>\n";
+						}
 						if(props['ticks']){
 							svg += "\t<line class=\"tick\" x1=\""+a[0]+"\" y1=\""+a[1]+"\" x2=\""+(a[0]-(axis=="y" ? tick : 0))+"\" y2=\""+(a[1]+(axis=="y" ? 0 : tick))+"\"></line>\n";
 						}
 						label = ticks['data-'+t];
 						if(ticks['label-'+t]) label = ticks['label-'+t];
 						if(props['format'] && props['format']=="commify") label = label.toLocaleString();
-						svg += "\t<text x=\""+a[0]+"\" y=\""+a[1]+"\" text-anchor=\""+(axis=="y" ? "end":"middle")+"\">"+label+"</text>\n";
+						svg += "\t<text x=\""+(a[0]+(props.labels && props.labels.left ? props.labels.left : 0))+"\" y=\""+a[1]+"\" text-anchor=\""+(axis=="y" ? "end":"middle")+"\">"+label+"</text>\n";
 					}
 				}
 			}
