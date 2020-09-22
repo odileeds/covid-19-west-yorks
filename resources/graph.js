@@ -108,6 +108,7 @@
 
 		function buildAxis(axis,props,conf){
 			var ticks,svg,t,a,b,axis,label,temp,tick;
+			if(!props) props = {};
 			tick = (props.tick||5);
 			
 			ticks = makeTicks(conf[(axis=="y" ? "ymin":"xmin")],conf[(axis=="y" ? "ymax":"xmax")],conf);
@@ -134,7 +135,7 @@
 				}
 				b = getXY(conf);
 				if(axis=="y"){
-					if(props.label.left){
+					if(props.label && props.label.left){
 						a[0] = props.label.left;
 					}
 				}

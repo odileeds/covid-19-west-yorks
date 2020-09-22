@@ -109,7 +109,7 @@
 				graph = Graph();
 				graph.addSeries({'title':'New cases','data':smooth,'raw':data,'color':'white','formatLabel':function(x,y,i){
 					return (new Date(x)).toISOString().substr(0,10)+': '+y.toFixed(1)+'/100000 ('+this.raw[i].y+' cases)';
-				}},'stroke':1,'strokehover':3,'point':3,'pointhover':5,'line':1);
+				},'stroke':1,'strokehover':3,'point':3,'pointhover':5,'line':1});
 	
 				return graph.draw({'width':240,'height':200,'left':15,'bottom':25,'axis':{'y':{'labels':{'left':25,'baseline':'middle'}},'x':{'line':1,'ticks':true}}});
 			},'fit':true},
