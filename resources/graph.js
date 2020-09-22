@@ -88,8 +88,8 @@
 						xpos = pos[0];
 						ypos = pos[1];
 						path += (this.series[s].data[i].x == minx ? "M":"L")+" "+xpos.toFixed(2)+","+ypos.toFixed(2);
-						if(props['points']){
-							circles += "\t<circle cx=\""+xpos.toFixed(2)+"\" cy=\""+ypos.toFixed(2)+"\" data-y=\""+this.series[s].data[i].y+"\" data-x=\""+this.series[s].data[i].x+"\" r=\""+props['point']+"\" fill=\""+(this.series[s].color||"#cc0935")+"\"><title>"+this.series[s].data[i].x+": "+this.series[s].data[i].y+"</title></circle>\n";
+						if(props['point']>0){
+							circles += "\t<circle cx=\""+xpos.toFixed(2)+"\" cy=\""+ypos.toFixed(2)+"\" data-y=\""+this.series[s].data[i].y+"\" data-x=\""+this.series[s].data[i].x+"\" r=\""+props['point']+"\" fill=\""+(this.series[s].color||"#cc0935")+"\"><title>"+(typeof this.series[s].formatLabel==="function" ? this.series[s].formatLabel.call(this.series[s],this.series[s].data[i].x,this.series[s].data[i].y,i) : this.series[s].data[i].x+": "+this.series[s].data[i].y)+"</title></circle>\n";
 						}
 					}
 				}

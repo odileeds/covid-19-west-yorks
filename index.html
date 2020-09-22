@@ -84,16 +84,34 @@
 			{'tagname':'div','key':'updated','html':function(la){ return (lad[la].weeks[0].days==7 && lad[la].weeks[1].days==7 ? lad[la].weeks[0].upto+' vs '+lad[la].weeks[1].upto : "Missing data"); }}
 		],
 		'daily-percapita-graph': [
-			{'tagname':'h3','key':'title','html':'Daily cases/100,000<br /><span class="small">(most recent days are under-estimates)</span>'},
+			{'tagname':'h3','key':'title','html':'Daily cases/100,000<br /><span class="small">Rolling 7-day average. Recent days are under-estimates.</span>'},
 			{'tagname':'div','key':'graph','html':function(la){
-				var data = new Array(lad[la].json.data.length);
-				for(var i = lad[la].json.data.length-1, j = 0; i>= 0; i--,j++){
-					data[j] = {'x':(new Date(lad[la].json.data[i].date)).getTime(),'y':(pop[la] ? lad[la].json.data[i]['newCasesBySpecimenDate']*1e5/pop[la] : 0)};
+				var i,j,data,smooth,n;
+				data = new Array(lad[la].json.data.length);
+				smooth = new Array(data.length);
+				
+				for(i = lad[la].json.data.length-1, j = 0; i>= 0; i--,j++){
+					data[j] = {'x':(new Date(lad[la].json.data[i].date)).getTime(),'y':(lad[la].json.data[i]['newCasesBySpecimenDate']||0)};
+				}
+				// Calculate 7-day rolling average
+				for(i = 0; i < data.length; i++){
+					smooth[i] = {'x':data[i].x,'y':0};
+					n = 0;
+					for(j = i-3; j <= i+3; j++){
+						if(j >=0 && j < data.length){
+							smooth[i].y += data[j].y;
+							n++;
+						}
+					}
+					smooth[i].y /= n;
+					if(pop[la]) smooth[i].y *= 1e5/pop[la];
 				}
 				graph = Graph();
-				graph.addSeries({'title':'New cases','data':data,'color':'white','points':false});
+				graph.addSeries({'title':'New cases','data':smooth,'raw':data,'color':'white','formatLabel':function(x,y,i){
+					return (new Date(x)).toISOString().substr(0,10)+': '+y.toFixed(1)+'/100000 ('+this.raw[i].y+' cases)';
+				}});
 	
-				return graph.draw({'width':240,'height':200,'left':15,'bottom':25,'yaxis-label-left':25,'xaxis-line':1,'stroke':1,'strokehover':3,'point':4,'pointhover':6,'line':1,'yaxis-labels-baseline':'middle','xaxis-ticks':true});
+				return graph.draw({'width':240,'height':200,'left':15,'bottom':25,'yaxis-label-left':25,'xaxis-line':1,'stroke':1,'strokehover':3,'point':3,'pointhover':5,'line':1,'yaxis-labels-baseline':'middle','xaxis-ticks':true});
 			},'fit':true},
 			{'tagname':'div','key':'updated','html':function(la){ return lad[la].json.data[0].date; }}
 		],
@@ -326,6 +344,8 @@
 			}
 		})
 	);
+
+	
 
 	promises.map(p => p.catch(e => e));
 	Promise.all(promises).then(responses => {
