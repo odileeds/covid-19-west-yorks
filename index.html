@@ -5,6 +5,15 @@
 	<meta charset="utf-8" />
 	<title>West Yorkshire COVID-19 Dashboard</title>
 	<link rel="StyleSheet" href="resources/style.css" type="text/css" />
+	<script src="resources/fittext.js"></script>
+	<script src="resources/clone.js"></script>
+	<style>
+	.grid .E08000032 { background-color: #006871; color: white; }
+	.grid .E08000033 { background-color: #3a843e; color: white; }
+	.grid .E08000034 { background-color: #0098b4; color: white; }
+	.grid .E08000035 { background-color: #007299; color: white; }
+	.grid .E08000036 { background-color: #333086; color: white; }
+	</style>
 </head>
 <body class="b1-bg">
 
@@ -14,16 +23,20 @@
 		</div>
 	</div>
 
-	<div class="b6-bg doublepadded" id="dashboard">
-		<div>
-			<section class="grid">
-				<h2 id="E08000032" class="E08000032 row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000032.html">Bradford</a></h2>
-				<h2 id="E08000033" class="E08000033 row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000033.html">Calderdale</a></h2>
-				<h2 id="E08000034" class="E08000034 row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000034.html">Kirklees</a></h2>
-				<h2 id="E08000035" class="E08000035 row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000035.html">Leeds</a></h2>
-				<h2 id="E08000036" class="E08000036 row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000036.html">Wakefield</a></h2>
-			</ul>
-		</div>
+	<div id="dashboard">
+		<section class="grid doublepadded b6-bg">
+			<h2 id="E08000032" class="E08000032 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000032.html">Bradford</a></h2>
+			<h2 id="E08000033" class="E08000033 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000033.html">Calderdale</a></h2>
+			<h2 id="E08000034" class="E08000034 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000034.html">Kirklees</a></h2>
+			<h2 id="E08000035" class="E08000035 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000035.html">Leeds</a></h2>
+			<h2 id="E08000036" class="E08000036 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000036.html">Wakefield</a></h2>
+<!--			<h2 id="E08000037" class="E08000037 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000036.html">Other</a></h2>
+			<h2 id="E08000022" class="E08000022 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000036.html">Other</a></h2>
+			<h2 id="E08000023" class="E08000023 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000036.html">Other</a></h2>
+			<h2 id="E08000024" class="E08000024 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000036.html">Other</a></h2>
+			<h2 id="E08000025" class="E08000025 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000036.html">Other</a></h2>
+-->
+		</section>
 	</div>
 
 	<footer class="b1-bg">
@@ -39,6 +52,62 @@
 	window.requestAnimFrame = (function(){
 		return  window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function( callback ){ window.setTimeout(callback, 1000 / 60); };
 	})();
+	var panel = {
+		'population': [
+			{'tagname':'h3','key':'title','html':'Population'},
+			{'tagname':'div','key':'number','class':'small','html':function(la){ return (pop[la]||'?'); }}
+		],
+		'total': [
+			{'tagname':'h3','key':'title','html':'Total cases'},
+			{'tagname':'div','key':'number','html':function(la){ return lad[la].json.data[0]['cumCasesBySpecimenDate']; },'fit':true},
+			{'tagname':'div','key':'updated','html':function(la){ return lad[la].json.data[0].date; }}
+		],
+		'total-percapita': [
+			{'tagname':'h3','key':'title','html':'Total cases/100,000'},
+			{'tagname':'div','key':'number','html':function(la){ return (pop[la] ? Math.round(lad[la].json.data[0]['cumCasesBySpecimenDate']*1e5/pop[la]) : '?'); },'fit':true},
+			{'tagname':'div','key':'updated','html':function(la){ return lad[la].json.data[0].date; }}
+		],
+		'daily-percapita-graph': [
+			{'tagname':'h3','key':'title','html':'Daily cases/100,000'},
+			{'tagname':'div','key':'number','html':function(la){ return lad[la].json.data[0]['newCasesBySpecimenDate']; },'fit':true},
+			{'tagname':'div','key':'updated','html':function(la){ return "2020?"; }}
+		],
+		'weekly': [
+			{'tagname':'h3','key':'title','html':'Weekly cases'},
+			{'tagname':'div','key':'number','html':function(la){ return (lad[la].weeks[0].days == 7 ? lad[la].weeks[0].total : ''); },'fit':true},
+			{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+lad[la].json.data[0].date; }}
+		],
+		'weekly-percapita': [
+			{'tagname':'h3','key':'title','html':'Weekly cases/100,000'},
+			{'tagname':'div','key':'number','html':function(la){ return (lad[la].weeks[0].days == 7 && pop[la] ? Math.round(lad[la].weeks[0].total*1e5/pop[la]) : '?'); },'fit':true},
+			{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+lad[la].json.data[0].date; }}
+		],
+		'weekly-change': [
+			{'tagname':'h3','key':'title','html':'Change on previous week'},
+			{'tagname':'div','key':'number','html':function(la){ return (lad[la].weeks[0].days==7 && lad[la].weeks[1].days==7 ? (lad[la].weeks[0].total - lad[la].weeks[1].total) : ''); },'fit':true},
+			{'tagname':'div','key':'updated','html':function(la){ return (lad[la].weeks[0].days==7 && lad[la].weeks[1].days==7 ? lad[la].weeks[0].upto+' vs '+lad[la].weeks[1].upto : "Missing data"); }}
+		],
+		'weekly-deaths': [
+			{'tagname':'h3','key':'title','html':'Weekly COVID-19 deaths'},
+			{'tagname':'div','key':'number','html':function(la){ return (lad[la].deaths ? lad[la].deaths.week['covid-19'] : ''); },'fit':true},
+			{'tagname':'div','key':'updated','html':function(la){ return (lad[la].deaths ? lad[la].deaths.week.text : '?'); }}
+		],
+		'total-deaths-covid': [
+			{'tagname':'h3','key':'title','html':'Total COVID-19 deaths'},
+			{'tagname':'div','key':'number','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total['covid-19'] : ''); },'fit':true},
+			{'tagname':'div','key':'updated','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total.date : '?'); }}
+		],
+		'total-deaths-all': [
+			{'tagname':'h3','key':'title','html':'Total deaths'},
+			{'tagname':'div','key':'number','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total['all'] : ''); },'fit':true},
+			{'tagname':'div','key':'updated','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total.date : ''); }}
+		],
+		'total-deaths-pc': [
+			{'tagname':'h3','key':'title','html':'Total COVID-19 deaths as a percent of total deaths'},
+			{'tagname':'div','key':'number','html':function(la){ return (lad[la].deaths ? Math.round(100*lad[la].deaths.total['covid-19']/lad[la].deaths.total['all'])+'%' : ''); },'fit':true},
+			{'tagname':'div','key':'updated','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total.date : ''); }}
+		]
+	}
 	
 	// Define populations
 	var pop = {"E08000032":540909,"E08000033":210958,"E08000034":441772,"E08000035":795565,"E08000036":352983};
@@ -46,7 +115,35 @@
 	// Define Local Authority Districts
 	var auth = document.querySelectorAll('.authority');
 	var lad = {};
-	for(var i = 0; i < auth.length; i++) lad[auth[i].getAttribute('id')] = {};
+	
+	// Update styles
+	var style = document.createElement('style');
+	style.innerHTML = ".grid { grid-template-columns: repeat("+auth.length+", 1fr); }";
+	for(var i = 0; i < auth.length; i++){
+		la = auth[i].getAttribute('id');
+		lad[la] = {};
+		style.innerHTML += '.'+la+' { grid-column: '+(i+1)+' }';
+	}
+	// Set grid row styling
+	i = 0;
+	for(var id in panel){
+		style.innerHTML += '.grid .row-'+(i+2)+' { grid-row: '+(i+2)+'; }';
+		i++;
+	}
+	// Set media styling
+	style.innerHTML += '@media only screen and (max-width: 640px) {';
+	i = 0;
+	for(var i = 0; i < auth.length; i++){
+		la = auth[i].getAttribute('id');
+		lad[la] = {};
+		style.innerHTML += '.grid .'+la+' { grid-column: 1; }';
+	}
+	style.innerHTML += '.grid { grid-template-columns: 1fr;';
+	style.innerHTML += '}'
+	// append the style to the DOM in <head> section
+	document.head.appendChild(style);
+
+
 
 
 	// Identify panels in DOM and put in loading animations
@@ -57,7 +154,7 @@
 
 		for(var id in lad[la].panels){
 			// Get a copy of the panels
-			panels = lad[la].panels[id];
+			cpanels = lad[la].panels[id];
 			// Update the structure
 			lad[la].panels[id] = {'_parent':document.querySelector('.'+la+'.'+id)};
 
@@ -66,6 +163,7 @@
 				if(existing.length > 0){
 					var panel = document.createElement('div');
 					panel.classList.add(la);
+					panel.classList.add('cell');
 					panel.classList.add('row-'+(i+2));
 					panel.classList.add(id);
 					panel.classList.add('padded');
@@ -80,24 +178,24 @@
 				// Clear any contents
 				lad[la].panels[id]._parent.innerHTML = "";
 				// Create each area within each panel
-				for(var p = 0; p < panels.length; p++){
-					lad[la].panels[id][panels[p].key] = panels[p];
-					lad[la].panels[id][panels[p].key].el = document.createElement(panels[p].tagname);
-					lad[la].panels[id][panels[p].key].el.classList.add(panels[p]['key']);
-					if(panels[p]['class']) lad[la].panels[id][panels[p].key].el.classList.add(panels[p]['class']);
-					if(typeof panels[p].html==="string"){
-						lad[la].panels[id][panels[p].key].el.innerHTML = panels[p].html;
-					}else if(typeof panels[p].html==="function"){
+				for(var p = 0; p < cpanels.length; p++){
+					lad[la].panels[id][cpanels[p].key] = cpanels[p];
+					lad[la].panels[id][cpanels[p].key].el = document.createElement(cpanels[p].tagname);
+					lad[la].panels[id][cpanels[p].key].el.classList.add(cpanels[p]['key']);
+					if(cpanels[p]['class']) lad[la].panels[id][cpanels[p].key].el.classList.add(cpanels[p]['class']);
+					if(typeof cpanels[p].html==="string"){
+						lad[la].panels[id][cpanels[p].key].el.innerHTML = cpanels[p].html;
+					}else if(typeof cpanels[p].html==="function"){
 						//lad[la].panels[id][panels[p].key].innerHTML = panels[p].html.call(this,la);
 					}
 					
-					lad[la].panels[id]._parent.append(lad[la].panels[id][panels[p].key].el);
-					if(panels[p]['key'] == "number"){
+					lad[la].panels[id]._parent.append(lad[la].panels[id][cpanels[p].key].el);
+					if(cpanels[p]['key'] == "number"){
 						// If we have a "number" area, put a loading animation in it
 						load = document.createElement('img');
 						load.src = "resources/odi.svg";
 						load.classList.add('spinner');
-						lad[la].panels[id][panels[p].key].el.append(load);
+						lad[la].panels[id][cpanels[p].key].el.append(load);
 					}
 				}
 			}else{
@@ -134,8 +232,17 @@
 					if(typeof lad[la].panels[id][bit].html==="string") v = lad[la].panels[id][bit].html;
 					else if(typeof lad[la].panels[id][bit].html==="function") v = lad[la].panels[id][bit].html.call(lad[la],la);
 					
-					if(bit == "number" && typeof v==="number") animateNumber(lad[la].panels[id][bit].el,v,300,'');
-					else lad[la].panels[id][bit].el.innerHTML = v;
+					if(bit == "number"){
+						if(typeof v==="number"){
+							animateNumber(lad[la].panels[id][bit].el,v,300,'','');
+						}else{
+							lad[la].panels[id][bit].el.innerHTML = v;
+							//if(lad[la].panels[id][bit].fit) window.fitText(lad[la].panels[id][bit].el,0.7,{'len':v.length,'minFontSize':12,'minChar':4});
+						}
+					}else{
+						lad[la].panels[id][bit].el.innerHTML = v;
+					}
+					if(lad[la].panels[id][bit].fit) window.fitText(lad[la].panels[id][bit].el,0.7,{'len':(v+"").length,'minFontSize':12,'minChar':4});
 				}
 			}
 		}
@@ -147,62 +254,7 @@
 		lad[la].url = url;
 		url = url.replace(/\{\{LA\}\}/,la);
 		console.info('Getting data for '+la+' from '+url);
-		lad[la].panels = {
-			'population': [
-				{'tagname':'h3','key':'title','html':'Population'},
-				{'tagname':'div','key':'number','class':'small','html':function(la){ return (pop[la]||'?'); }}
-			],
-			'total': [
-				{'tagname':'h3','key':'title','html':'Total cases'},
-				{'tagname':'div','key':'number','html':function(la){ return lad[la].json.data[0]['cumCasesBySpecimenDate']; }},
-				{'tagname':'div','key':'updated','html':function(la){ return lad[la].json.data[0].date; }}
-			],
-			'total-percapita': [
-				{'tagname':'h3','key':'title','html':'Total cases/100,000'},
-				{'tagname':'div','key':'number','html':function(la){ return (pop[la] ? Math.round(lad[la].json.data[0]['cumCasesBySpecimenDate']*1e5/pop[la]) : '?'); }},
-				{'tagname':'div','key':'updated','html':function(la){ return lad[la].json.data[0].date; }}
-			],
-			'daily-percapita-graph': [
-				{'tagname':'h3','key':'title','html':'Daily cases/100,000'},
-				{'tagname':'div','key':'number','html':function(la){ return lad[la].json.data[0]['newCasesBySpecimenDate']; }},
-				{'tagname':'div','key':'updated','html':function(la){ return "2020?"; }}
-			],
-			'weekly': [
-				{'tagname':'h3','key':'title','html':'Weekly cases'},
-				{'tagname':'div','key':'number','html':function(la){ return (lad[la].weeks[0].days == 7 ? lad[la].weeks[0].total : ''); }},
-				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+lad[la].json.data[0].date; }}
-			],
-			'weekly-percapita': [
-				{'tagname':'h3','key':'title','html':'Weekly cases/100,000'},
-				{'tagname':'div','key':'number','html':function(la){ return (lad[la].weeks[0].days == 7 && pop[la] ? Math.round(lad[la].weeks[0].total*1e5/pop[la]) : '?'); }},
-				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+lad[la].json.data[0].date; }}
-			],
-			'weekly-change': [
-				{'tagname':'h3','key':'title','html':'Change on previous week'},
-				{'tagname':'div','key':'number','html':function(la){ return (lad[la].weeks[0].days==7 && lad[la].weeks[1].days==7 ? (lad[la].weeks[0].total - lad[la].weeks[1].total) : ''); }},
-				{'tagname':'div','key':'updated','html':function(la){ return (lad[la].weeks[0].days==7 && lad[la].weeks[1].days==7 ? lad[la].weeks[0].upto+' vs '+lad[la].weeks[1].upto : "Missing data"); }}
-			],
-			'weekly-deaths': [
-				{'tagname':'h3','key':'title','html':'Weekly COVID-19 deaths'},
-				{'tagname':'div','key':'number','html':function(la){ return (lad[la].deaths ? lad[la].deaths.week['covid-19'] : ''); }},
-				{'tagname':'div','key':'updated','html':function(la){ return (lad[la].deaths ? lad[la].deaths.week.text : '?'); }}
-			],
-			'total-deaths-covid': [
-				{'tagname':'h3','key':'title','html':'Total COVID-19 deaths'},
-				{'tagname':'div','key':'number','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total['covid-19'] : ''); }},
-				{'tagname':'div','key':'updated','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total.date : '?'); }}
-			],
-			'total-deaths-all': [
-				{'tagname':'h3','key':'title','html':'Total deaths'},
-				{'tagname':'div','key':'number','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total['all'] : ''); }},
-				{'tagname':'div','key':'updated','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total.date : ''); }}
-			],
-			'total-deaths-pc': [
-				{'tagname':'h3','key':'title','html':'Total COVID-19 deaths as a percent of total deaths'},
-				{'tagname':'div','key':'number','html':function(la){ return (lad[la].deaths ? Math.round(100*lad[la].deaths.total['covid-19']/lad[la].deaths.total['all'])+'%' : ''); }},
-				{'tagname':'div','key':'updated','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total.date : ''); }}
-			]
-		};
+		lad[la].panels = clone(panel);
 		initPanels(la);
 		
 		return fetch(url,{'method':'GET'})
@@ -224,7 +276,7 @@
 		if(v > 1e4) return Math.round(v/1e3)+"k";
 		return v;
 	}
-	function animateNumber(el,val,duration,pre,post){
+	function animateNumber(el,val,duration,pre,post,callback){
 		if(typeof val!=="number"){
 			val = el.innerHTML;
 			if(val) val = parseFloat(val);
@@ -245,6 +297,7 @@
 				requestAnimFrame(frame);
 			}else{
 				el.innerHTML = (pre+formatNumber(val)+post);
+				if(typeof callback==="function") callback.call(el);
 			}
 		}
 		if(typeof val==="number") frame();

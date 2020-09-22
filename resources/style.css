@@ -91,25 +91,11 @@ a.b1-bg:hover, a.b2-bg:hover, a.b3-bg:hover, a.b4-bg:hover, a.b5-bg:hover, a.b6-
 	grid-gap: 0.25em;
 	order: 1;
 	margin: 0px;
-	padding: 0px;
 }
-.grid .E08000032 { grid-column: 1; background-color: #006871; color: white; }
-.grid .E08000033 { grid-column: 2; background-color: #3a843e; color: white; }
-.grid .E08000034 { grid-column: 3; background-color: #0098b4; color: white; }
-.grid .E08000035 { grid-column: 4; background-color: #007299; color: white; }
-.grid .E08000036 { grid-column: 5; background-color: #333086; color: white; }
-.grid .row-1 { grid-row: 1; }
-.grid .row-2 { grid-row: 2; }
-.grid .row-3 { grid-row: 3; }
-.grid .row-4 { grid-row: 4; }
-.grid .row-5 { grid-row: 5; }
-.grid .row-6 { grid-row: 6; }
-.grid .row-7 { grid-row: 7; }
-.grid .row-8 { grid-row: 8; }
-.grid .row-9 { grid-row: 9; }
-.grid .row-10 { grid-row: 10; }
-.grid .row-11 { grid-row: 11; }
+.grid .cell { background: white; }
+.grid .padded { }
 /* End of CSS Grid */
+
 
 .output { position: relative; padding: 0.5em; }
 
@@ -122,12 +108,7 @@ section > div > div {
 	margin: auto;
 	text-align: center;
 	display: block;
-	font-size: 5em;
-	-webkit-transition: all 0.5s ease-in-out;
-	-moz-transition: all 0.5s ease-in-out;
-	-ms-transition: all 0.5s ease-in-out;
-	-o-transition: all 0.5s ease-in-out;
-	transition: all 0.5s ease-in-out;
+	font-size: 1.25em;
 }
 .small {
 	font-size: 2.5em;
@@ -186,21 +167,5 @@ div:hover > .updated, div:hover > .title, div:focus > .updated, div:focus > .tit
 		grid-template-columns: 1fr;
 		grid-template-rows: auto auto;
 	}
-	.grid .E08000032 { grid-column: 1; }
-	.grid .E08000033 { grid-column: 1; }
-	.grid .E08000034 { grid-column: 1; }
-	.grid .E08000035 { grid-column: 1; }
-	.grid .E08000036 { grid-column: 1; }
-	.grid .row-1 { grid-row: auto; }
-	.grid .row-2 { grid-row: auto; }
-	.grid .row-3 { grid-row: auto; }
-	.grid .row-4 { grid-row: auto; }
-	.grid .row-5 { grid-row: auto; }
-	.grid .row-6 { grid-row: auto; }
-	.grid .row-7 { grid-row: auto; }
-	.grid .row-8 { grid-row: auto; }
-	.grid .row-9 { grid-row: auto; }
-	.grid .row-10 { grid-row: auto; }
-	.grid .row-11 { grid-row: auto; }
-
+	.grid .cell { grid-row: auto!important; }
 }
