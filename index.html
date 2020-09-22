@@ -7,6 +7,7 @@
 	<link rel="StyleSheet" href="resources/style.css" type="text/css" />
 	<script src="resources/fittext.js"></script>
 	<script src="resources/clone.js"></script>
+	<script src="resources/graph.js"></script>
 	<style>
 	.grid .E08000032 { background-color: #006871; color: white; }
 	.grid .E08000033 { background-color: #3a843e; color: white; }
@@ -55,7 +56,7 @@
 	var panel = {
 		'population': [
 			{'tagname':'h3','key':'title','html':'Population'},
-			{'tagname':'div','key':'number','class':'small','html':function(la){ return (pop[la]||'?'); }}
+			{'tagname':'div','key':'number','html':function(la){ return (pop[la]||'?'); },'fit':true}
 		],
 		'total': [
 			{'tagname':'h3','key':'title','html':'Total cases'},
@@ -66,11 +67,6 @@
 			{'tagname':'h3','key':'title','html':'Total cases/100,000'},
 			{'tagname':'div','key':'number','html':function(la){ return (pop[la] ? Math.round(lad[la].json.data[0]['cumCasesBySpecimenDate']*1e5/pop[la]) : '?'); },'fit':true},
 			{'tagname':'div','key':'updated','html':function(la){ return lad[la].json.data[0].date; }}
-		],
-		'daily-percapita-graph': [
-			{'tagname':'h3','key':'title','html':'Daily cases/100,000'},
-			{'tagname':'div','key':'number','html':function(la){ return lad[la].json.data[0]['newCasesBySpecimenDate']; },'fit':true},
-			{'tagname':'div','key':'updated','html':function(la){ return "2020?"; }}
 		],
 		'weekly': [
 			{'tagname':'h3','key':'title','html':'Weekly cases'},
@@ -86,6 +82,20 @@
 			{'tagname':'h3','key':'title','html':'Change on previous week'},
 			{'tagname':'div','key':'number','html':function(la){ return (lad[la].weeks[0].days==7 && lad[la].weeks[1].days==7 ? (lad[la].weeks[0].total - lad[la].weeks[1].total) : ''); },'fit':true},
 			{'tagname':'div','key':'updated','html':function(la){ return (lad[la].weeks[0].days==7 && lad[la].weeks[1].days==7 ? lad[la].weeks[0].upto+' vs '+lad[la].weeks[1].upto : "Missing data"); }}
+		],
+		'daily-percapita-graph': [
+			{'tagname':'h3','key':'title','html':'Daily cases/100,000<br /><span class="small">(most recent days are under-estimates)</span>'},
+			{'tagname':'div','key':'graph','html':function(la){
+				var data = new Array(lad[la].json.data.length);
+				for(var i = lad[la].json.data.length-1, j = 0; i>= 0; i--,j++){
+					data[j] = {'x':(new Date(lad[la].json.data[i].date)).getTime(),'y':(pop[la] ? lad[la].json.data[i]['newCasesBySpecimenDate']*1e5/pop[la] : 0)};
+				}
+				graph = Graph();
+				graph.addSeries({'title':'New cases','data':data,'color':'white','points':false});
+	
+				return graph.draw({'width':240,'height':200,'left':15,'bottom':25,'yaxis-label-left':25,'xaxis-line':1,'stroke':1,'strokehover':3,'point':4,'pointhover':6,'line':1,'yaxis-labels-baseline':'middle','xaxis-ticks':true});
+			},'fit':true},
+			{'tagname':'div','key':'updated','html':function(la){ return lad[la].json.data[0].date; }}
 		],
 		'weekly-deaths': [
 			{'tagname':'h3','key':'title','html':'Weekly COVID-19 deaths'},
