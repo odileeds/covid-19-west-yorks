@@ -8,6 +8,7 @@
 	<script src="resources/fittext.js"></script>
 	<script src="resources/clone.js"></script>
 	<script src="resources/graph.js"></script>
+	<script src="resources/dashboard.js"></script>
 	<style>
 	.grid .E08000032 { background-color: #006871; color: white; }
 	.grid .E08000033 { background-color: #3a843e; color: white; }
@@ -43,307 +44,92 @@
 	</footer>
 
 	<script>
-	// shim layer with setTimeout fallback
-	window.requestAnimFrame = (function(){
-		return  window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function( callback ){ window.setTimeout(callback, 1000 / 60); };
-	})();
-	var panel = {
-		'population': [
-			{'tagname':'h3','key':'title','html':'Population'},
-			{'tagname':'div','key':'number','html':function(la){ return (pop[la]||'?'); },'fit':true}
-		],
-		'total': [
-			{'tagname':'h3','key':'title','html':'Total cases'},
-			{'tagname':'div','key':'number','html':function(la){ return lad[la].json.data[0]['cumCasesBySpecimenDate']; },'fit':true},
-			{'tagname':'div','key':'updated','html':function(la){ return lad[la].json.data[0].date; }}
-		],
-		'total-percapita': [
-			{'tagname':'h3','key':'title','html':'Total cases/100,000'},
-			{'tagname':'div','key':'number','html':function(la){ return (pop[la] ? Math.round(lad[la].json.data[0]['cumCasesBySpecimenDate']*1e5/pop[la]) : '?'); },'fit':true},
-			{'tagname':'div','key':'updated','html':function(la){ return lad[la].json.data[0].date; }}
-		],
-		'weekly': [
-			{'tagname':'h3','key':'title','html':'Weekly cases'},
-			{'tagname':'div','key':'number','html':function(la){ return (lad[la].weeks[0].days == 7 ? lad[la].weeks[0].total : ''); },'fit':true},
-			{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+lad[la].json.data[0].date; }}
-		],
-		'weekly-percapita': [
-			{'tagname':'h3','key':'title','html':'Weekly cases/100,000'},
-			{'tagname':'div','key':'number','html':function(la){ return (lad[la].weeks[0].days == 7 && pop[la] ? Math.round(lad[la].weeks[0].total*1e5/pop[la]) : '?'); },'fit':true},
-			{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+lad[la].json.data[0].date; }}
-		],
-		'weekly-change': [
-			{'tagname':'h3','key':'title','html':'Change on previous week'},
-			{'tagname':'div','key':'number','html':function(la){ return (lad[la].weeks[0].days==7 && lad[la].weeks[1].days==7 ? (lad[la].weeks[0].total - lad[la].weeks[1].total) : ''); },'fit':true},
-			{'tagname':'div','key':'updated','html':function(la){ return (lad[la].weeks[0].days==7 && lad[la].weeks[1].days==7 ? lad[la].weeks[0].upto+' vs '+lad[la].weeks[1].upto : "Missing data"); }}
-		],
-		'daily-percapita-graph': [
-			{'tagname':'h3','key':'title','html':'Daily cases/100,000<br /><span class="small">Rolling 7-day average. Recent days are under-estimates.</span>'},
-			{'tagname':'div','key':'graph','html':function(la){
-				var i,j,data,smooth,n;
-				data = new Array(lad[la].json.data.length);
-				smooth = new Array(data.length);
-				
-				for(i = lad[la].json.data.length-1, j = 0; i>= 0; i--,j++){
-					data[j] = {'x':(new Date(lad[la].json.data[i].date)).getTime(),'y':(lad[la].json.data[i]['newCasesBySpecimenDate']||0)};
-				}
-				// Calculate 7-day rolling average
-				for(i = 0; i < data.length; i++){
-					smooth[i] = {'x':data[i].x,'y':0};
-					n = 0;
-					for(j = i-3; j <= i+3; j++){
-						if(j >=0 && j < data.length){
-							smooth[i].y += data[j].y;
-							n++;
-						}
-					}
-					smooth[i].y /= n;
-					if(pop[la]) smooth[i].y *= 1e5/pop[la];
-				}
-				graph = Graph();
-				graph.addSeries({'title':'New cases','data':smooth,'raw':data,'color':'white','formatLabel':function(x,y,i){
-					return (new Date(x)).toISOString().substr(0,10)+': '+y.toFixed(1)+'/100000 ('+this.raw[i].y+' cases)';
-				},'stroke':1,'strokehover':3,'point':3,'pointhover':5,'line':1});
-	
-				return graph.draw({'width':240,'height':200,'left':15,'bottom':25,'axis':{'y':{'labels':{'left':10,'baseline':'middle'},'line':1},'x':{'line':1,'ticks':true}}});
-			},'fit':true},
-			{'tagname':'div','key':'updated','html':function(la){ return lad[la].json.data[0].date; }}
-		],
-		'weekly-deaths': [
-			{'tagname':'h3','key':'title','html':'Weekly COVID-19 deaths'},
-			{'tagname':'div','key':'number','html':function(la){ return (lad[la].deaths ? lad[la].deaths.week['covid-19'] : ''); },'fit':true},
-			{'tagname':'div','key':'updated','html':function(la){ return (lad[la].deaths ? lad[la].deaths.week.text : '?'); }}
-		],
-		'total-deaths-covid': [
-			{'tagname':'h3','key':'title','html':'Total COVID-19 deaths'},
-			{'tagname':'div','key':'number','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total['covid-19'] : ''); },'fit':true},
-			{'tagname':'div','key':'updated','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total.date : '?'); }}
-		],
-		'total-deaths-all': [
-			{'tagname':'h3','key':'title','html':'Total deaths'},
-			{'tagname':'div','key':'number','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total['all'] : ''); },'fit':true},
-			{'tagname':'div','key':'updated','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total.date : ''); }}
-		],
-		'total-deaths-pc': [
-			{'tagname':'h3','key':'title','html':'Total COVID-19 deaths as a percent of total deaths'},
-			{'tagname':'div','key':'number','html':function(la){ return (lad[la].deaths ? Math.round(100*lad[la].deaths.total['covid-19']/lad[la].deaths.total['all'])+'%' : ''); },'fit':true},
-			{'tagname':'div','key':'updated','html':function(la){ return (lad[la].deaths ? lad[la].deaths.total.date : ''); }}
-		]
-	}
-	
-	// Define populations
-	var pop = {"E08000032":540909,"E08000033":210958,"E08000034":441772,"E08000035":795565,"E08000036":352983};
 
-	// Define Local Authority Districts
-	var auth = document.querySelectorAll('.authority');
-	var lad = {};
-	
-	// Update styles
-	var style = document.createElement('style');
-	style.innerHTML = ".grid { grid-template-columns: repeat("+auth.length+", 1fr); }";
-	for(var i = 0; i < auth.length; i++){
-		la = auth[i].getAttribute('id');
-		lad[la] = {};
-		style.innerHTML += '.'+la+' { grid-column: '+(i+1)+' }';
-	}
-	// Set grid row styling
-	i = 0;
-	for(var id in panel){
-		style.innerHTML += '.grid .row-'+(i+2)+' { grid-row: '+(i+2)+'; }';
-		i++;
-	}
-	// Set media styling
-	style.innerHTML += '@media only screen and (max-width: 640px) {';
-	i = 0;
-	for(var i = 0; i < auth.length; i++){
-		la = auth[i].getAttribute('id');
-		lad[la] = {};
-		style.innerHTML += '.grid .'+la+' { grid-column: 1; }';
-	}
-	style.innerHTML += '.grid { grid-template-columns: 1fr;';
-	style.innerHTML += '}'
-	// append the style to the DOM in <head> section
-	document.head.appendChild(style);
-
-
-
-
-	// Identify panels in DOM and put in loading animations
-	function initPanels(la){
-
-		var i = 0;
-		var existing = document.querySelectorAll('.'+la);
-
-		for(var id in lad[la].panels){
-			// Get a copy of the panels
-			cpanels = lad[la].panels[id];
-			// Update the structure
-			lad[la].panels[id] = {'_parent':document.querySelector('.'+la+'.'+id)};
-
-			if(!lad[la].panels[id]._parent){
-				// Need to add this panel 
-				if(existing.length > 0){
-					var panel = document.createElement('div');
-					panel.classList.add(la);
-					panel.classList.add('cell');
-					panel.classList.add('row-'+(i+2));
-					panel.classList.add(id);
-					panel.classList.add('padded');
-					panel.setAttribute('tabindex',0);
-					// Append it 
-					existing[existing.length-1].insertAdjacentElement('afterend', panel);
-					existing = [panel];
-					lad[la].panels[id]._parent = panel;
-				}
-			}
-			if(lad[la].panels[id]._parent){
-				// Clear any contents
-				lad[la].panels[id]._parent.innerHTML = "";
-				// Create each area within each panel
-				for(var p = 0; p < cpanels.length; p++){
-					lad[la].panels[id][cpanels[p].key] = cpanels[p];
-					lad[la].panels[id][cpanels[p].key].el = document.createElement(cpanels[p].tagname);
-					lad[la].panels[id][cpanels[p].key].el.classList.add(cpanels[p]['key']);
-					if(cpanels[p]['class']) lad[la].panels[id][cpanels[p].key].el.classList.add(cpanels[p]['class']);
-					if(typeof cpanels[p].html==="string"){
-						lad[la].panels[id][cpanels[p].key].el.innerHTML = cpanels[p].html;
-					}else if(typeof cpanels[p].html==="function"){
-						//lad[la].panels[id][panels[p].key].innerHTML = panels[p].html.call(this,la);
-					}
+	var dashboard = Dashboard({
+		'population':{"E08000032":540909,"E08000033":210958,"E08000034":441772,"E08000035":795565,"E08000036":352983},
+		'panel':{
+			'population': [
+				{'tagname':'h3','key':'title','html':'Population'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.population||'?'); },'fit':true}
+			],
+			'total': [
+				{'tagname':'h3','key':'title','html':'Total cases'},
+				{'tagname':'div','key':'number','html':function(la){ return this.json.data[0]['cumCasesBySpecimenDate']; },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return this.json.data[0].date; }}
+			],
+			'total-percapita': [
+				{'tagname':'h3','key':'title','html':'Total cases/100,000'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.population ? Math.round(this.json.data[0]['cumCasesBySpecimenDate']*1e5/this.population) : '?'); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return this.json.data[0].date; }}
+			],
+			'weekly': [
+				{'tagname':'h3','key':'title','html':'Weekly cases'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days == 7 ? this.weeks[0].total : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.json.data[0].date; }}
+			],
+			'weekly-percapita': [
+				{'tagname':'h3','key':'title','html':'Weekly cases/100,000'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days == 7 && this.population ? Math.round(this.weeks[0].total*1e5/this.population) : '?'); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.json.data[0].date; }}
+			],
+			'weekly-change': [
+				{'tagname':'h3','key':'title','html':'Change on previous week'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days==7 && this.weeks[1].days==7 ? (this.weeks[0].total - this.weeks[1].total) : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return (this.weeks[0].days==7 && this.weeks[1].days==7 ? this.weeks[0].upto+' vs '+this.weeks[1].upto : "Missing data"); }}
+			],
+			'daily-percapita-graph': [
+				{'tagname':'h3','key':'title','html':'Daily cases/100,000<br /><span class="small">Rolling 7-day average. Recent days are under-estimates.</span>'},
+				{'tagname':'div','key':'graph','html':function(la){
+					var i,j,data,smooth,n;
+					data = new Array(this.json.data.length);
+					smooth = new Array(data.length);
 					
-					lad[la].panels[id]._parent.append(lad[la].panels[id][cpanels[p].key].el);
-					if(cpanels[p]['key'] == "number"){
-						// If we have a "number" area, put a loading animation in it
-						load = document.createElement('img');
-						load.src = "resources/odi.svg";
-						load.classList.add('spinner');
-						lad[la].panels[id][cpanels[p].key].el.append(load);
+					for(i = this.json.data.length-1, j = 0; i>= 0; i--,j++){
+						data[j] = {'x':(new Date(this.json.data[i].date)).getTime(),'y':(this.json.data[i]['newCasesBySpecimenDate']||0)};
 					}
-				}
-			}else{
-				console.error("Can't find "+la+"."+id);
-			}
-			i++;
-		}
-		return;
-	}
-	function displayLA(la){
-
-		if(!lad[la].json){
-			console.error('No JSON for '+la);
-			return;
-		}
-		// Work out weekly totals
-		var latest = new Date(lad[la].json.data[0].date);
-		var weeks = [{'total':0,'days':0,'upto':lad[la].json.data[0].date}];
-		for(var i = 0; i < lad[la].json.data.length; i++){
-			d = new Date(lad[la].json.data[i].date);
-			w = Math.floor(((latest-d)/86400000)/7);
-			if(weeks.length <= w) weeks.push({'total':0,'days':0,'upto':lad[la].json.data[i].date});
-			weeks[w].total += lad[la].json.data[i]['newCasesBySpecimenDate'];
-			weeks[w].days++;
-		}
-		lad[la].weeks = weeks;
-		
-		// Update the panels
-		var v,id,bit;
-		for(id in lad[la].panels){
-			for(bit in lad[la].panels[id]){
-				if(bit != "_parent"){
-					v = "";
-					if(typeof lad[la].panels[id][bit].html==="string") v = lad[la].panels[id][bit].html;
-					else if(typeof lad[la].panels[id][bit].html==="function") v = lad[la].panels[id][bit].html.call(lad[la],la);
-					
-					if(bit == "number"){
-						if(typeof v==="number"){
-							animateNumber(lad[la].panels[id][bit].el,v,300,'','');
-						}else{
-							lad[la].panels[id][bit].el.innerHTML = v;
-							//if(lad[la].panels[id][bit].fit) window.fitText(lad[la].panels[id][bit].el,0.7,{'len':v.length,'minFontSize':12,'minChar':4});
+					// Calculate 7-day rolling average
+					for(i = 0; i < data.length; i++){
+						smooth[i] = {'x':data[i].x,'y':0};
+						n = 0;
+						for(j = i-3; j <= i+3; j++){
+							if(j >=0 && j < data.length){
+								smooth[i].y += data[j].y;
+								n++;
+							}
 						}
-					}else{
-						lad[la].panels[id][bit].el.innerHTML = v;
+						smooth[i].y /= n;
+						if(this.population) smooth[i].y *= 1e5/this.population;
 					}
-					if(lad[la].panels[id][bit].fit) window.fitText(lad[la].panels[id][bit].el,0.7,{'len':(v+"").length,'minFontSize':12,'minChar':4});
-				}
-			}
-		}
-
-		return this;
-	}
-	function getDataForLA(la){
-		url = "https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode={{LA}}&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json";
-		lad[la].url = url;
-		url = url.replace(/\{\{LA\}\}/,la);
-		console.info('Getting data for '+la+' from '+url);
-		lad[la].panels = clone(panel);
-		initPanels(la);
+					graph = Graph();
+					graph.addSeries({'title':'New cases','data':smooth,'raw':data,'color':'white','formatLabel':function(x,y,i){
+						return (new Date(x)).toISOString().substr(0,10)+': '+y.toFixed(1)+'/100000 ('+this.raw[i].y+' cases)';
+					},'stroke':1,'strokehover':3,'point':3,'pointhover':5,'line':1});
 		
-		return fetch(url,{'method':'GET'})
-		.then(response => { return response.json() })
-		.then(json => {
-			lad[la].json = json;
-			//load.parentNode.removeChild(load);
-			//displayLA(la);
-		}).catch(error => {
-			console.error(error,url);
-			lad[la] = {};
-		});
-	}
-	function formatNumber(v){
-		if(typeof v !== "number") return v;
-		if(v > 1e7) return Math.round(v/1e6)+"M";
-		if(v > 1e6) return (v/1e6).toFixed(1)+"M";
-		if(v > 1e5) return Math.round(v/1e3)+"k";
-		if(v > 1e4) return Math.round(v/1e3)+"k";
-		return v;
-	}
-	function animateNumber(el,val,duration,pre,post,callback){
-		if(typeof val!=="number"){
-			val = el.innerHTML;
-			if(val) val = parseFloat(val);
-			el.innerHTML = '';
+					return graph.draw({'width':240,'height':200,'left':15,'bottom':25,'axis':{'y':{'labels':{'left':10,'baseline':'middle'},'line':1},'x':{'line':1,'ticks':true}}});
+				},'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return this.json.data[0].date; }}
+			],
+			'weekly-deaths': [
+				{'tagname':'h3','key':'title','html':'Weekly COVID-19 deaths'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.deaths ? this.deaths.week['covid-19'] : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return (this.deaths ? this.deaths.week.text : '?'); }}
+			],
+			'total-deaths-covid': [
+				{'tagname':'h3','key':'title','html':'Total COVID-19 deaths'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.deaths ? this.deaths.total['covid-19'] : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return (this.deaths ? this.deaths.total.date : '?'); }}
+			],
+			'total-deaths-all': [
+				{'tagname':'h3','key':'title','html':'Total deaths'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.deaths ? this.deaths.total['all'] : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return (this.deaths ? this.deaths.total.date : ''); }}
+			],
+			'total-deaths-pc': [
+				{'tagname':'h3','key':'title','html':'Total COVID-19 deaths as a percent of total deaths'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.deaths ? Math.round(100*this.deaths.total['covid-19']/this.deaths.total['all'])+'%' : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return (this.deaths ? this.deaths.total.date : ''); }}
+			]
 		}
-		el.innerHTML = '';
-		if(!pre) pre = "";
-		if(!post) post = "";
-		var start = new Date();
-		var v;
-		function frame(){
-			var now = new Date();
-			// Set the current time in seconds
-			var f = (now - start)/duration;
-			if(f < 1){
-				v = formatNumber(Math.round(val*f));
-				el.innerHTML = (pre+v+post);
-				requestAnimFrame(frame);
-			}else{
-				el.innerHTML = (pre+formatNumber(val)+post);
-				if(typeof callback==="function") callback.call(el);
-			}
-		}
-		if(typeof val==="number") frame();
-		return;			
-	}
-	
-	var promises = [];
-	for(var la in lad) promises.push(getDataForLA(la));
-	
-	// Get death data (from other repo)
-	promises.push(fetch("https://odileeds.github.io/covid-19/LocalAuthorities/data/death-summary.json",{'method':'GET'})
-		.then(response => { return response.json() })
-		.then(json => {
-			for(var la in json){
-				if(lad[la]) lad[la].deaths = json[la];
-			}
-		})
-	);
-
-	
-
-	promises.map(p => p.catch(e => e));
-	Promise.all(promises).then(responses => {
-		for(var la in lad) displayLA(la);
 	});
 	</script>
 </body>
