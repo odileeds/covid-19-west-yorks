@@ -65,12 +65,12 @@
 			'weekly': [
 				{'tagname':'h3','key':'title','html':'Weekly cases'},
 				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days == 7 ? this.weeks[0].total : ''); },'fit':true},
-				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.json.data[0].date; }}
+				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.weeks[0].upto; }}
 			],
 			'weekly-percapita': [
 				{'tagname':'h3','key':'title','html':'Weekly cases/100,000'},
 				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days == 7 && this.population ? Math.round(this.weeks[0].total*1e5/this.population) : '?'); },'fit':true},
-				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.json.data[0].date; }}
+				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.weeks[0].upto; }}
 			],
 			'weekly-change': [
 				{'tagname':'h3','key':'title','html':'Change on previous week'},

@@ -127,10 +127,11 @@
 			console.error('No JSON for '+la);
 			return;
 		}
+		var start = 2;
 		// Work out weekly totals
-		var latest = new Date(lad[la].json.data[0].date);
-		var weeks = [{'total':0,'days':0,'upto':lad[la].json.data[0].date}];
-		for(var i = 0; i < lad[la].json.data.length; i++){
+		var latest = new Date(lad[la].json.data[start].date);
+		var weeks = [{'total':0,'days':0,'upto':lad[la].json.data[start].date}];
+		for(var i = start; i < lad[la].json.data.length; i++){
 			d = new Date(lad[la].json.data[i].date);
 			w = Math.floor(((latest-d)/86400000)/7);
 			if(weeks.length <= w) weeks.push({'total':0,'days':0,'upto':lad[la].json.data[i].date});
