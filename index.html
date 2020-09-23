@@ -44,7 +44,7 @@
 	<footer class="b1-bg">
 		<div class="holder">
 			<h2 id="risk">Levels of risk</h2>
-			<p>Column colours use <a href="https://covid19.ca.gov/safer-economy/">California's four levels of risk</a>. California use <em>positivity rate</em> and new daily cases per 100k. Unfortunately PHE don't publish the number of tests at Local Authority Level so we can't calculate a <em>positivity rate</em>; we only use the daily new cases per 100k. Because the most recent days in the data are under-reported (data still being collated) we ignore the most recent two days and use the day before that. This has the same date as the "weekly" figures.</p>
+			<p>Column colours use <a href="https://covid19.ca.gov/safer-economy/">California's four levels of risk</a>. California use <em>positivity rate</em> and new daily cases per 100k. Unfortunately PHE don't publish the number of tests at Local Authority Level so we can't calculate a <em>positivity rate</em>; we only use the daily new cases per 100k. Because the most recent days in the data are under-reported (data still being collated) we ignore the most recent four days and use the day before that. This has the same date as the "weekly" figures.</p>
 			<h2>Credits</h2>
 			<p>© 2020 <a href="https://odileeds.org/">ODI Leeds</a>. <a href="https://coronavirus.data.gov.uk/">Cases data comes from Public Health England</a> and <a href="https://www.ons.gov.uk/datasets/weekly-deaths-local-authority/editions/time-series/versions">death data comes from ONS</a>.
 			<br />Code released under an MIT license. <a href="https://github.com/odileeds/covid-19-west-yorks">Source on Github</a>.
@@ -72,17 +72,17 @@
 				{'tagname':'div','key':'updated','html':function(la){ return this.json.data[0].date; }}
 			],
 			'weekly': [
-				{'tagname':'h3','key':'title','html':'Weekly cases<br/><span class="small">Ignoring most recent 2 days</small>'},
+				{'tagname':'h3','key':'title','html':'Weekly cases<br/><span class="small">Ignoring most recent four days</small>'},
 				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days == 7 ? this.weeks[0].total : ''); },'fit':true},
 				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.weeks[0].upto; }}
 			],
 			'weekly-percapita': [
-				{'tagname':'h3','key':'title','html':'Weekly cases/100,000<br/><span class="small">Ignoring most recent 2 days</small>'},
+				{'tagname':'h3','key':'title','html':'Weekly cases/100,000<br/><span class="small">Ignoring most recent four days</small>'},
 				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days == 7 && this.population ? Math.round(this.weeks[0].total*1e5/this.population) : '?'); },'fit':true},
 				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.weeks[0].upto; }}
 			],
 			'weekly-change': [
-				{'tagname':'h3','key':'title','html':'Change on previous week<br/><span class="small">Ignoring most recent 2 days</small>'},
+				{'tagname':'h3','key':'title','html':'Change on previous week<br/><span class="small">Ignoring most recent four days</small>'},
 				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days==7 && this.weeks[1].days==7 ? (this.weeks[0].total - this.weeks[1].total) : ''); },'fit':true},
 				{'tagname':'div','key':'updated','html':function(la){ return (this.weeks[0].days==7 && this.weeks[1].days==7 ? this.weeks[0].upto+' vs '+this.weeks[1].upto : "Missing data"); }}
 			],
