@@ -63,17 +63,17 @@
 				{'tagname':'div','key':'updated','html':function(la){ return this.json.data[0].date; }}
 			],
 			'weekly': [
-				{'tagname':'h3','key':'title','html':'Weekly cases'},
+				{'tagname':'h3','key':'title','html':'Weekly cases<br/><span class="small">Ignoring most recent 2 days</small>'},
 				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days == 7 ? this.weeks[0].total : ''); },'fit':true},
 				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.weeks[0].upto; }}
 			],
 			'weekly-percapita': [
-				{'tagname':'h3','key':'title','html':'Weekly cases/100,000'},
+				{'tagname':'h3','key':'title','html':'Weekly cases/100,000<br/><span class="small">Ignoring most recent 2 days</small>'},
 				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days == 7 && this.population ? Math.round(this.weeks[0].total*1e5/this.population) : '?'); },'fit':true},
 				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.weeks[0].upto; }}
 			],
 			'weekly-change': [
-				{'tagname':'h3','key':'title','html':'Change on previous week'},
+				{'tagname':'h3','key':'title','html':'Change on previous week<br/><span class="small">Ignoring most recent 2 days</small>'},
 				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days==7 && this.weeks[1].days==7 ? (this.weeks[0].total - this.weeks[1].total) : ''); },'fit':true},
 				{'tagname':'div','key':'updated','html':function(la){ return (this.weeks[0].days==7 && this.weeks[1].days==7 ? this.weeks[0].upto+' vs '+this.weeks[1].upto : "Missing data"); }}
 			],
