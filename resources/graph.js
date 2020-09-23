@@ -142,7 +142,6 @@
 				if(a[1] >= 0 && a[0] >= conf['left']){
 					if(a[0] < conf['width']){
 						if((t == 0 && props.line > 0) || props['lines']){
-							console.log('here');
 							svg += "\t<line x1=\""+a[0]+"\" y1=\""+a[1]+"\" x2=\""+b[0]+"\" y2=\""+b[1]+"\" data-left=\""+conf['left']+"\"></line>\n";
 						}
 						if(props['ticks']){
