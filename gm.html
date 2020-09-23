@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8" />
+	<title>Greater Manchester COVID-19 Dashboard</title>
+	<link rel="StyleSheet" href="resources/style.css" type="text/css" />
+	<script src="resources/fittext.js"></script>
+	<script src="resources/clone.js"></script>
+	<script src="resources/graph.js"></script>
+	<script src="resources/dashboard.js"></script>
+	<style>
+	.grid .E08000001 { background-color: #444; color: white; }
+	.grid .E08000002 { background-color: #444; color: white; }
+	.grid .E08000003 { background-color: #444; color: white; }
+	.grid .E08000004 { background-color: #444; color: white; }
+	.grid .E08000005 { background-color: #444; color: white; }
+	.grid .E08000006 { background-color: #444; color: white; }
+	.grid .E08000007 { background-color: #444; color: white; }
+	.grid .E08000008 { background-color: #444; color: white; }
+	.grid .E08000009 { background-color: #444; color: white; }
+	.grid .E08000010 { background-color: #444; color: white; }
+	</style>
+</head>
+<body class="b1-bg">
+
+	<div class="b1-bg padded">
+		<div class="holder">
+			<h1>Greater Manchester COVID-19 Dashboard</h1>
+		</div>
+	</div>
+
+	<div id="dashboard">
+		<section class="grid doublepadded b6-bg">
+			<h2 id="E08000001" class="E08000001 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000001.html">Bolton</a></h2>
+			<h2 id="E08000002" class="E08000002 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000002.html">Bury</a></h2>
+			<h2 id="E08000003" class="E08000003 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000003.html">Manchester</a></h2>
+			<h2 id="E08000004" class="E08000004 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000004.html">Oldham</a></h2>
+			<h2 id="E08000005" class="E08000005 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000005.html">Rochdale</a></h2>
+			<h2 id="E08000006" class="E08000006 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000006.html">Salford</a></h2>
+			<h2 id="E08000007" class="E08000007 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000007.html">Stockport</a></h2>
+			<h2 id="E08000008" class="E08000008 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000008.html">Tameside</a></h2>
+			<h2 id="E08000009" class="E08000009 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000009.html">Trafford</a></h2>
+			<h2 id="E08000010" class="E08000010 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000010.html">Wigan</a></h2>
+		</section>
+	</div>
+
+	<footer class="b1-bg">
+		<div class="holder">
+			© 2020 <a href="https://odileeds.org/">ODI Leeds</a>. <a href="https://coronavirus.data.gov.uk/">Cases data comes from Public Health England</a> and <a href="https://www.ons.gov.uk/datasets/weekly-deaths-local-authority/editions/time-series/versions">death data comes from ONS</a>.
+			<br />Code released under an MIT license. <a href="https://github.com/odileeds/covid-19-west-yorks">Source on Github</a>.
+			<p><a href="https://github.com/odileeds/covid-19/tree/master/LocalAuthorities/data">We process the ONS weekly death data</a> - England and Wales - for our <a href="https://odileeds.github.io/covid-19/LocalAuthorities/hexmap.html">UK local authority hexmaps</a> (<a href="https://odileeds.github.io/covid-19/LocalAuthorities/data/death-summary.json">json</a>). ONS tend to publish the death data once per week on Tuesdays so the dates are given in each panel. Data on confirmed cases are from five requests (<a href="https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode=E08000032&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json">Bradford</a>, <a href="https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode=E08000033&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json">Calderdale</a>, <a href="https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode=E08000034&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json">Kirklees</a>, <a href="https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode=E08000035&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json">Leeds</a>, and <a href="https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode=E08000036&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json">Wakefield</a>) to <a href="https://coronavirus.data.gov.uk/developers-guide">Public Health England's API</a>.</p>
+		</div>
+	</footer>
+
+	<script>
+
+	var dashboard = Dashboard({
+		'population':{"E08000001":287550,"E08000002":190990,"E08000003":552858,"E08000004":237110,"E08000005":222412,"E08000006":258834,"E08000007":293423,"E08000008":226493,"E08000009":237354,"E08000010":328662},
+		'panel':{
+			'population': [
+				{'tagname':'h3','key':'title','html':'Population'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.population||'?'); },'fit':true}
+			],
+			'total': [
+				{'tagname':'h3','key':'title','html':'Total cases'},
+				{'tagname':'div','key':'number','html':function(la){ return this.json.data[0]['cumCasesBySpecimenDate']; },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return this.json.data[0].date; }}
+			],
+			'total-percapita': [
+				{'tagname':'h3','key':'title','html':'Total cases/100,000'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.population ? Math.round(this.json.data[0]['cumCasesBySpecimenDate']*1e5/this.population) : '?'); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return this.json.data[0].date; }}
+			],
+			'weekly': [
+				{'tagname':'h3','key':'title','html':'Weekly cases<br/><span class="small">Ignoring most recent 2 days</small>'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days == 7 ? this.weeks[0].total : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.weeks[0].upto; }}
+			],
+			'weekly-percapita': [
+				{'tagname':'h3','key':'title','html':'Weekly cases/100,000<br/><span class="small">Ignoring most recent 2 days</small>'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days == 7 && this.population ? Math.round(this.weeks[0].total*1e5/this.population) : '?'); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.weeks[0].upto; }}
+			],
+			'weekly-change': [
+				{'tagname':'h3','key':'title','html':'Change on previous week<br/><span class="small">Ignoring most recent 2 days</small>'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days==7 && this.weeks[1].days==7 ? (this.weeks[0].total - this.weeks[1].total) : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return (this.weeks[0].days==7 && this.weeks[1].days==7 ? this.weeks[0].upto+' vs '+this.weeks[1].upto : "Missing data"); }}
+			],
+			'daily-percapita-graph': [
+				{'tagname':'h3','key':'title','html':'Daily cases/100,000<br /><span class="small">Rolling 7-day average. Recent days are under-estimates.</span>'},
+				{'tagname':'div','key':'graph','html':function(la){
+					var i,j,data,smooth,n;
+					data = new Array(this.json.data.length);
+					smooth = new Array(data.length);
+					
+					for(i = this.json.data.length-1, j = 0; i>= 0; i--,j++){
+						data[j] = {'x':(new Date(this.json.data[i].date)).getTime(),'y':(this.json.data[i]['newCasesBySpecimenDate']||0)};
+					}
+					// Calculate 7-day rolling average
+					for(i = 0; i < data.length; i++){
+						smooth[i] = {'x':data[i].x,'y':0};
+						n = 0;
+						for(j = i-3; j <= i+3; j++){
+							if(j >=0 && j < data.length){
+								smooth[i].y += data[j].y;
+								n++;
+							}
+						}
+						smooth[i].y /= n;
+						if(this.population) smooth[i].y *= 1e5/this.population;
+					}
+					graph = Graph();
+					graph.addSeries({'title':'New cases','data':smooth,'raw':data,'color':'white','formatLabel':function(x,y,i){
+						return (new Date(x)).toISOString().substr(0,10)+': '+y.toFixed(1)+'/100000 ('+this.raw[i].y+' cases)';
+					},'stroke':1,'strokehover':3,'point':3,'pointhover':5,'line':1});
+		
+					return graph.draw({'width':240,'height':200,'left':15,'bottom':25,'axis':{'y':{'labels':{'left':10,'baseline':'middle'},'line':1},'x':{'line':1,'ticks':true}}});
+				},'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return this.json.data[0].date; }}
+			],
+			'weekly-deaths': [
+				{'tagname':'h3','key':'title','html':'Weekly COVID-19 deaths'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.deaths ? this.deaths.week['covid-19'] : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return (this.deaths ? this.deaths.week.text : '?'); }}
+			],
+			'total-deaths-covid': [
+				{'tagname':'h3','key':'title','html':'Total COVID-19 deaths'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.deaths ? this.deaths.total['covid-19'] : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return (this.deaths ? this.deaths.total.date : '?'); }}
+			],
+			'total-deaths-all': [
+				{'tagname':'h3','key':'title','html':'Total deaths'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.deaths ? this.deaths.total['all'] : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return (this.deaths ? this.deaths.total.date : ''); }}
+			],
+			'total-deaths-pc': [
+				{'tagname':'h3','key':'title','html':'Total COVID-19 deaths as a percent of total deaths'},
+				{'tagname':'div','key':'number','html':function(la){ return (this.deaths ? Math.round(100*this.deaths.total['covid-19']/this.deaths.total['all'])+'%' : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return (this.deaths ? this.deaths.total.date : ''); }}
+			]
+		}
+	});
+	</script>
+</body>
+</html>
