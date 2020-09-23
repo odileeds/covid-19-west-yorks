@@ -31,6 +31,14 @@
 	</div>
 
 	<div id="dashboard">
+		<div class="b6-bg key">Levels of risk<sup><a href="#risk">[note]</a></sup>:
+			<ul>
+			<li class="key-item"><div class="key-block widespread"></div> Widespread</li>
+			<li class="key-item"><div class="key-block substantial"></div> Substantial</li>
+			<li class="key-item"><div class="key-block moderate"></div> Moderate</li>
+			<li class="key-item"><div class="key-block minimal"></div> Minimal</li>
+			</ul>
+		</div>
 		<section class="grid doublepadded b6-bg">
 			<h2 id="E08000001" class="E08000001 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000001.html">Bolton</a></h2>
 			<h2 id="E08000002" class="E08000002 cell row-1 authority" tabindex="0"><a href="https://findthatpostcode.uk/areas/E08000002.html">Bury</a></h2>
@@ -47,11 +55,15 @@
 
 	<footer class="b1-bg">
 		<div class="holder">
-			© 2020 <a href="https://odileeds.org/">ODI Leeds</a>. <a href="https://coronavirus.data.gov.uk/">Cases data comes from Public Health England</a> and <a href="https://www.ons.gov.uk/datasets/weekly-deaths-local-authority/editions/time-series/versions">death data comes from ONS</a>.
+			<h2 id="risk">Levels of risk</h2>
+			<p>Column colours use <a href="https://covid19.ca.gov/safer-economy/">California's four levels of risk</a>. California use <em>positivity rate</em> and new daily cases per 100k. Unfortunately PHE don't publish the number of tests at Local Authority Level so we can't calculate a <em>positivity rate</em>; we only use the daily new cases per 100k. Because the most recent days in the data are under-reported (data still being collated) we ignore the most recent two days and use the day before that. This has the same date as the "weekly" figures.</p>
+			<h2>Credits</h2>
+			<p>© 2020 <a href="https://odileeds.org/">ODI Leeds</a>. <a href="https://coronavirus.data.gov.uk/">Cases data comes from Public Health England</a> and <a href="https://www.ons.gov.uk/datasets/weekly-deaths-local-authority/editions/time-series/versions">death data comes from ONS</a>.
 			<br />Code released under an MIT license. <a href="https://github.com/odileeds/covid-19-west-yorks">Source on Github</a>.
 			<p><a href="https://github.com/odileeds/covid-19/tree/master/LocalAuthorities/data">We process the ONS weekly death data</a> - England and Wales - for our <a href="https://odileeds.github.io/covid-19/LocalAuthorities/hexmap.html">UK local authority hexmaps</a> (<a href="https://odileeds.github.io/covid-19/LocalAuthorities/data/death-summary.json">json</a>). ONS tend to publish the death data once per week on Tuesdays so the dates are given in each panel. Data on confirmed cases are from five requests (<a href="https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode=E08000032&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json">Bradford</a>, <a href="https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode=E08000033&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json">Calderdale</a>, <a href="https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode=E08000034&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json">Kirklees</a>, <a href="https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode=E08000035&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json">Leeds</a>, and <a href="https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=ltla;areaCode=E08000036&structure=%7B%22date%22:%22date%22,%22areaName%22:%22areaName%22,%22areaCode%22:%22areaCode%22,%22newCasesBySpecimenDate%22:%22newCasesBySpecimenDate%22,%22cumCasesBySpecimenDate%22:%22cumCasesBySpecimenDate%22%7D&format=json">Wakefield</a>) to <a href="https://coronavirus.data.gov.uk/developers-guide">Public Health England's API</a>.</p>
 		</div>
 	</footer>
+
 
 	<script>
 
@@ -111,7 +123,7 @@
 						if(this.population) smooth[i].y *= 1e5/this.population;
 					}
 					graph = Graph();
-					graph.addSeries({'title':'New cases','data':smooth,'raw':data,'color':'white','formatLabel':function(x,y,i){
+					graph.addSeries({'title':'New cases','data':smooth,'raw':data,'formatLabel':function(x,y,i){
 						return (new Date(x)).toISOString().substr(0,10)+': '+y.toFixed(1)+'/100000 ('+this.raw[i].y+' cases)';
 					},'stroke':1,'strokehover':3,'point':3,'pointhover':5,'line':1});
 		
@@ -139,6 +151,23 @@
 				{'tagname':'div','key':'number','html':function(la){ return (this.deaths ? Math.round(100*this.deaths.total['covid-19']/this.deaths.total['all'])+'%' : ''); },'fit':true},
 				{'tagname':'div','key':'updated','html':function(la){ return (this.deaths ? this.deaths.total.date : ''); }}
 			]
+		},
+		'colour': function(lad){
+			var v,i,cls,la;
+			for(la in lad){
+				v = (lad[la].population ? Math.round(lad[la].json.data[2]['newCasesBySpecimenDate']*1e5/lad[la].population) : 0);
+				panels = document.querySelectorAll('.'+la);
+				for(i = 0; i < panels.length; i++){
+					cls = "";
+					// Definitions from https://covid19.ca.gov/safer-economy/
+					if(v >= 7) cls = "widespread";
+					else if(v >= 4 && v < 7) cls = "substantial";
+					else if(v >= 1 && v < 4) cls = "moderate";
+					else cls = "minimal";
+					if(cls) panels[i].classList.add(cls);
+				}
+			}
+			return;
 		}
 	});
 	</script>

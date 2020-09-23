@@ -52,10 +52,10 @@
 		);
 
 		
-
 		promises.map(p => p.catch(e => e));
 		Promise.all(promises).then(responses => {
-			for(var la in lad) displayLA(la);
+			for(var la in lad) this.displayLA(la);
+			if(typeof this.opts.colour==="function") this.opts.colour.call(this,lad);
 		});
 
 
@@ -121,7 +121,7 @@
 		}
 		return;
 	}
-	function displayLA(la){
+	Dashboard.prototype.displayLA = function(la){
 
 		if(!lad[la].json){
 			console.error('No JSON for '+la);

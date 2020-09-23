@@ -61,11 +61,11 @@
 			svg += "\t.data-series circle { display: none; }\n";
 			svg += "\t.data-series:hover path.line, .data-series.on path.line { stroke-width: "+props['strokehover']+"; }\n";
 			svg += "\t.data-series:hover circle, .data-series.on circle { display: inline; }\n";
-			svg += "\t.data-series circle:hover, .data-series circle.on { r: "+props['pointhover']+"px!important; fill: white; }\n";
+			svg += "\t.data-series circle:hover, .data-series circle.on { r: "+props['pointhover']+"px!important; }\n";
 			svg += "\t.graph-grid { font-family: \"Helvetica Neue\",Helvetica,Arial,\"Lucida Grande\",sans-serif; }\n";
-			svg += "\t.graph-grid line { stroke: rgb(255,255,255); stroke-width: "+(props['line'])+"; stroke-linecap: round; }\n";
-			svg += "\t.graph-grid.graph-grid-x text { text-anchor: middle; dominant-baseline: hanging; transform: translateY("+(props.tick*2)+"px); fill:white; }\n";
-			svg += "\t.graph-grid.graph-grid-y text { text-anchor: end; dominant-baseline: "+(props.axis.y.labels.baseline||"middle")+"; transform: translateX(-"+(props['tick']*2)+"px); fill:white; }\n";
+			svg += "\t.graph-grid line { stroke-width: "+(props['line']||1)+"; stroke-linecap: round; }\n";
+			svg += "\t.graph-grid.graph-grid-x text { text-anchor: middle; dominant-baseline: hanging; transform: translateY("+(props.tick*2)+"px); }\n";
+			svg += "\t.graph-grid.graph-grid-y text { text-anchor: end; dominant-baseline: "+(props.axis.y.labels.baseline||"middle")+"; transform: translateX(-"+(props['tick']*2)+"px); }\n";
 			svg += "\t</style>\n";
 			svg += "</defs>\n";
 
@@ -96,7 +96,7 @@
 						}
 					}
 				}
-				svg += "\t<path d=\""+path+"\" id=\""+safeID(series)+"\" class=\"line\" stroke=\""+(this.series[s].color||"#cc0935")+"\" stroke-width=\""+props['stroke']+"\" stroke-linecap=\"round\"><title>"+safeseries+"</title></path>\n";
+				svg += "\t<path d=\""+path+"\" id=\""+safeID(series)+"\" class=\"line\" stroke-width=\""+props['stroke']+"\" stroke-linecap=\"round\"><title>"+safeseries+"</title></path>\n";
 				svg += circles;
 				svg += "</g>\n";
 			}

@@ -46,6 +46,7 @@ h1 { margin-top: 0; }
 h2 { margin-top: 0; padding: 0.25em 0; text-align: center; }
 footer { width: 100%; padding: 1em; padding-bottom: 3em; }
 footer a { color: white; }
+footer h2 { text-align: left; margin-top: 1em; }
 h2 a, h2 a:visited { color: inherit; }
 
 
@@ -77,6 +78,11 @@ a.b1-bg:hover, a.b2-bg:hover, a.b3-bg:hover, a.b4-bg:hover, a.b5-bg:hover, a.b6-
 .c1-bg .button, .c2-bg .button, .c3-bg .button, .c4-bg .button, .c5-bg .button, .c6-bg .button, .c7-bg .button, .c8-bg .button, .c9-bg .button, .c10-bg .button, .c11-bg .button, .c12-bg .button, .c13-bg .button, .c14-bg .button { background-color: #efefef; color: black!important; }
 .b6-bg .button { background-color: black; color: white!important; }
 
+.widespread, .grid .widespread { background: #802f67!important; color: white!important; stroke: white; fill: white; }
+.substantial, .grid .substantial { background: #c43d53!important; color: white!important; stroke: white; fill: white; }
+.moderate, .grid .moderate { background: #d97641!important; color: black!important; stroke: black; fill: black; }
+.minimal, .grid .minimal { background: #e6b735!important; color: black!important; stroke: black; fill: black; }
+
 
 .holder { position: relative; width: 1080px; max-width: 100%; margin: auto; }
 .padded { padding: 1em; }
@@ -95,6 +101,12 @@ a.b1-bg:hover, a.b2-bg:hover, a.b3-bg:hover, a.b4-bg:hover, a.b5-bg:hover, a.b6-
 .grid .cell { background: white; }
 .grid .padded { }
 /* End of CSS Grid */
+
+
+.key { padding: 1em 2em 0 2em; }
+.key ul { display: inline-block; }
+.key-item { display: inline-block; line-height:1em; margin-right: 1em; }
+.key-block { width: 1em; height: 1em; float: left; display: inline-block; margin-right: 0.25em; }
 
 
 .output { position: relative; padding: 0.5em; }
