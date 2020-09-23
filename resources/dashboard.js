@@ -126,7 +126,7 @@
 			console.error('No JSON for '+la);
 			return;
 		}
-		var start = 2;
+		var start = 4;
 		// Work out weekly totals
 		var latest = new Date(lad[la].json.data[start].date);
 		var weeks = [{'total':0,'days':0,'upto':lad[la].json.data[start].date}];
