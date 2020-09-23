@@ -155,7 +155,8 @@
 		'colour': function(lad){
 			var v,i,cls,la;
 			for(la in lad){
-				v = (lad[la].population ? Math.round(lad[la].json.data[2]['newCasesBySpecimenDate']*1e5/lad[la].population) : 0);
+				// Use smoothed value
+				v = (lad[la].population ? Math.round((lad[la].weeks[0].total*1e5/lad[la].population)/7) : 0);
 				panels = document.querySelectorAll('.'+la);
 				for(i = 0; i < panels.length; i++){
 					cls = "";

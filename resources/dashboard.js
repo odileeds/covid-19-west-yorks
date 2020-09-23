@@ -51,7 +51,6 @@
 			})
 		);
 
-		
 		promises.map(p => p.catch(e => e));
 		Promise.all(promises).then(responses => {
 			for(var la in lad) this.displayLA(la);
