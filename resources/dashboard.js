@@ -38,26 +38,25 @@
 		document.head.appendChild(style);
 
 
-		var promises = [];
-		for(var la in lad) promises.push(this.getDataForLA(la));
 		
 		// Get death data (from other repo)
-		promises.push(fetch("https://odileeds.github.io/covid-19/LocalAuthorities/data/death-summary.json",{'method':'GET'})
-			.then(response => { return response.json() })
-			.then(json => {
-				for(var la in json){
-					if(lad[la]) lad[la].deaths = json[la];
-				}
-			})
-		);
-
+		fetch("https://odileeds.github.io/covid-19/LocalAuthorities/data/death-summary.json",{'method':'GET'})
+		.then(response => { return response.json() })
+		.then(json => {
+			for(var la in json){
+				if(lad[la]) lad[la].deaths = json[la];
+			}
+			for(var la in lad) this.getDataForLA(la);
+			
+		})
+/*
 		promises.map(p => p.catch(e => e));
 		Promise.all(promises).then(responses => {
 			for(var la in lad) this.displayLA(la);
 			if(typeof this.opts.colour==="function") this.opts.colour.call(this,lad);
 		});
 
-
+*/
 		return this;
 	}
 
@@ -177,8 +176,14 @@
 		.then(response => { return response.json() })
 		.then(json => {
 			lad[la].json = json;
-			//load.parentNode.removeChild(load);
-			//displayLA(la);
+			this.displayLA(la);
+			var i = 0;
+			var n = 0;
+			for(l in lad){
+				if(typeof lad[l].weeks==="object") i++;
+				n++;
+			}
+			if(i==n && typeof this.opts.colour==="function") this.opts.colour.call(this,lad);
 		}).catch(error => {
 			console.error(error,url);
 			lad[la] = {};
