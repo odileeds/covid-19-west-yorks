@@ -155,29 +155,13 @@ div:hover > .updated, div:hover > .title, div:focus > .updated, div:focus > .tit
 	background: black!important;
 }
 
-@media only screen and (max-width: 1080px) {
-	
-	#dashboard { font-size: 12px; }
-	
-}
-
-@media only screen and (max-width: 850px) {
-	
-	#dashboard { font-size: 11px; }
-	
-}
-
-@media only screen and (max-width: 750px) {
-	
-	#dashboard { font-size: 9px; }
-	
-}
 
 @media only screen and (max-width: 640px) {
 
-	#dashboard { font-size: 10px; }
-
+	.key { padding: 1em 1em 0 1em; font-size: 0.85em; }
 	.doublepadded { padding: 1em; }
+	.key-item { margin-right: 0.5em; }
+	.grid h2.authority { margin-top: 1em; }
 	
 	.grid {
 		grid-template-columns: 1fr;

@@ -6,6 +6,8 @@
 		
 		if(!opts) opts = {};
 		this.opts = opts;
+		if(!this.opts.start) this.opts.start = 2;
+		if(this.opts.daystoignore) this.opts.start = this.opts.daystoignore;
 
 		// Define Local Authority Districts
 		var auth = document.querySelectorAll('.authority');
@@ -48,15 +50,8 @@
 			}
 			for(var la in lad) this.getDataForLA(la);
 			
-		})
-/*
-		promises.map(p => p.catch(e => e));
-		Promise.all(promises).then(responses => {
-			for(var la in lad) this.displayLA(la);
-			if(typeof this.opts.colour==="function") this.opts.colour.call(this,lad);
 		});
 
-*/
 		return this;
 	}
 
@@ -125,11 +120,10 @@
 			console.error('No JSON for '+la);
 			return;
 		}
-		var start = 4;
 		// Work out weekly totals
-		var latest = new Date(lad[la].json.data[start].date);
-		var weeks = [{'total':0,'days':0,'upto':lad[la].json.data[start].date}];
-		for(var i = start; i < lad[la].json.data.length; i++){
+		var latest = new Date(lad[la].json.data[this.opts.start].date);
+		var weeks = [{'total':0,'days':0,'upto':lad[la].json.data[this.opts.start].date}];
+		for(var i = this.opts.start; i < lad[la].json.data.length; i++){
 			d = new Date(lad[la].json.data[i].date);
 			w = Math.floor(((latest-d)/86400000)/7);
 			if(weeks.length <= w) weeks.push({'total':0,'days':0,'upto':lad[la].json.data[i].date});

@@ -53,7 +53,9 @@
 
 	<script>
 
+	var start = 5;
 	var dashboard = Dashboard({
+		'daystoignore': start,
 		'population':{"E07000169":90620,"E07000165":160831,"E07000163":57142,"E07000166":53730,"E07000164":91594,"E07000167":55380,"E07000168":108757,"E06000014":210618,"E06000003":137150,"E06000002":174700,"E06000004":197348},
 		'panel':{
 			'population': [
@@ -71,19 +73,19 @@
 				{'tagname':'div','key':'updated','html':function(la){ return this.json.data[0].date; }}
 			],
 			'weekly': [
-				{'tagname':'h3','key':'title','html':'Weekly cases<br/><span class="small">Ignoring most recent four days</small>'},
+				{'tagname':'h3','key':'title','html':'Weekly cases<br/><span class="small">Ignoring most recent '+start+' days</small>'},
 				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days == 7 ? this.weeks[0].total : ''); },'fit':true},
 				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.weeks[0].upto; }}
 			],
+			'weekly-change': [
+				{'tagname':'h3','key':'title','html':'Change on previous week<br/><span class="small">Ignoring most recent '+start+' days</small>'},
+				{'tagname':'div','key':'number','html':function(la){ var diff = (this.weeks[0].total - this.weeks[1].total); return (this.weeks[0].days==7 && this.weeks[1].days==7 ? (diff < 0 ? '-':'+')+diff : ''); },'fit':true},
+				{'tagname':'div','key':'updated','html':function(la){ return (this.weeks[0].days==7 && this.weeks[1].days==7 ? this.weeks[0].upto+' vs '+this.weeks[1].upto : "Missing data"); }}
+			],
 			'weekly-percapita': [
-				{'tagname':'h3','key':'title','html':'Weekly cases/100,000<br/><span class="small">Ignoring most recent four days</small>'},
+				{'tagname':'h3','key':'title','html':'Weekly cases/100,000<br/><span class="small">Ignoring most recent '+start+' days</small>'},
 				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days == 7 && this.population ? Math.round(this.weeks[0].total*1e5/this.population) : '?'); },'fit':true},
 				{'tagname':'div','key':'updated','html':function(la){ return 'Up to '+this.weeks[0].upto; }}
-			],
-			'weekly-change': [
-				{'tagname':'h3','key':'title','html':'Change on previous week<br/><span class="small">Ignoring most recent four days</small>'},
-				{'tagname':'div','key':'number','html':function(la){ return (this.weeks[0].days==7 && this.weeks[1].days==7 ? (this.weeks[0].total - this.weeks[1].total) : ''); },'fit':true},
-				{'tagname':'div','key':'updated','html':function(la){ return (this.weeks[0].days==7 && this.weeks[1].days==7 ? this.weeks[0].upto+' vs '+this.weeks[1].upto : "Missing data"); }}
 			],
 			'daily-percapita-graph': [
 				{'tagname':'h3','key':'title','html':'Daily cases/100,000<br /><span class="small">Rolling 7-day average. Recent days are under-estimates.</span>'},
@@ -108,10 +110,38 @@
 						smooth[i].y /= n;
 						if(this.population) smooth[i].y *= 1e5/this.population;
 					}
+					
+					recent = (smooth.splice(smooth.length-start,start));
+					recent.unshift(smooth[smooth.length-1]);
+					recentdata = (data.splice(data.length-start,start));
+					recentdata.unshift(data[data.length-1]);
+					
 					graph = Graph();
-					graph.addSeries({'title':'New cases','data':smooth,'raw':data,'color':'white','formatLabel':function(x,y,i){
-						return (new Date(x)).toISOString().substr(0,10)+': '+y.toFixed(1)+'/100000 ('+this.raw[i].y+' cases)';
-					},'stroke':1,'strokehover':3,'point':3,'pointhover':5,'line':1});
+					graph.addSeries({
+						'title':'New cases',
+						'data':smooth,
+						'raw':data,
+						'color':'white',
+						'stroke':1,
+						'strokehover':3,
+						'point':3,
+						'pointhover':5,
+						'line':1,
+						'formatLabel':function(x,y,i){
+							return (new Date(x)).toISOString().substr(0,10)+': '+y.toFixed(1)+'/100000 ('+this.raw[i].y+' cases)';
+						}
+					}).addSeries({
+						'title': 'Recent cases',
+						'data': recent,
+						'raw': recentdata,
+						'color': 'red',
+						'stroke': 1,
+						'strokehover': 3,
+						'stroke-dasharray': '5,5',
+						'point': 3,
+						'pointhover': 5,
+						'line': 2
+					});
 		
 					return graph.draw({'width':240,'height':200,'left':15,'bottom':25,'axis':{'y':{'labels':{'left':10,'baseline':'middle'},'line':1},'x':{'line':1,'ticks':true}}});
 				},'fit':true},

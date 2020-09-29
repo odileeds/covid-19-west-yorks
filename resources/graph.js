@@ -90,13 +90,18 @@
 						pos = getXY({'x':this.series[s].data[i].x,'y':this.series[s].data[i].y,'width':w,'height':h,'left':left,'right':right,'bottom':bottom,'top':topp,'xmin':minx,'xmax':maxx,'ymin':miny,'ymax':maxy});
 						xpos = pos[0];
 						ypos = pos[1];
-						path += (this.series[s].data[i].x == minx ? "M":"L")+" "+xpos.toFixed(2)+","+ypos.toFixed(2);
+						path += (i == 0 ? "M":"L")+" "+xpos.toFixed(2)+","+ypos.toFixed(2);
 						if(props['point']>0){
 							circles += "\t<circle cx=\""+xpos.toFixed(2)+"\" cy=\""+ypos.toFixed(2)+"\" data-y=\""+this.series[s].data[i].y+"\" data-x=\""+this.series[s].data[i].x+"\" r=\""+props['point']+"\" fill=\""+(this.series[s].color||"#cc0935")+"\"><title>"+(typeof this.series[s].formatLabel==="function" ? this.series[s].formatLabel.call(this.series[s],this.series[s].data[i].x,this.series[s].data[i].y,i) : this.series[s].data[i].x+": "+this.series[s].data[i].y)+"</title></circle>\n";
 						}
 					}
 				}
-				svg += "\t<path d=\""+path+"\" id=\""+safeID(series)+"\" class=\"line\" stroke-width=\""+props['stroke']+"\" stroke-linecap=\"round\"><title>"+safeseries+"</title></path>\n";
+				console.log(props);
+				svg += "\t<path d=\""+path+"\" id=\""+safeID(series)+"\" class=\"line\"";
+				if(this.series[s].stroke) svg += " stroke-width=\""+this.series[s].stroke+"\"";
+				svg += " stroke-linecap=\"round\"";
+				if(this.series[s]['stroke-dasharray']) svg += " stroke-dasharray=\""+this.series[s]['stroke-dasharray']+"\"";
+				svg += "><title>"+safeseries+"</title></path>\n";
 				svg += circles;
 				svg += "</g>\n";
 			}
